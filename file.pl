@@ -13,6 +13,9 @@ lsd(D,F) :- ls(D,F0), filter(directory,F0,F).
 lsd(D) :- lsd(D,F), maplist(puts,F).
 lsd :- lsd('.').
 
+cd(X) :- change_directory(X). cd :- cd('.').
+pwd(X) :- working_directory(X). pwd :- pwd(X), puts(X).
+
 % todo: fix directory being called without full filepath?
 % need to use atom_concat to prepend paths
 % todo : add unlimited depth
