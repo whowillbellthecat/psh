@@ -1,5 +1,5 @@
 :- include('list.pl').
-:- include('io.pl')
+:- include('io.pl').
 
 hidden_file_path(P) :- atom_concat('.',_,P).
 directory(D) :- file_property(D,type(directory)).
