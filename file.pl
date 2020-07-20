@@ -1,9 +1,8 @@
 :- include('list.pl').
+:- include('io.pl')
 
 hidden_file_path(P) :- atom_concat('.',_,P).
 directory(D) :- file_property(D,type(directory)).
-puts(M,S) :- write(M,S), nl(S).
-puts(M) :- write(M), nl.
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
 
 ls(D,F) :- directory_files(D,T), exclude(hidden_file_path,T,F).
