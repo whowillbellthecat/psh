@@ -37,9 +37,10 @@ find(P,N,D) :- nonvar(D), find(P,N,D,F), maplist(puts,F).
 find(P,D,O) :- var(O), find(P,D,1,O).
 find(P,D) :- nonvar(D), find(P,D,'.',F), maplist(puts,F).
 find(P,O) :- var(O), find(P,1,'.',O).
-find(P) :- nonvar(P), find(P,'.').
-find(O) :- var(O), find(atom,'.').
+find(P) :- nonvar(P), find(P,1).
+find(O) :- var(O), find(atom,1).
 
 %file listing, with output similar to listing/1.
 fl(X,M) :- atom_concat(X, '.pl', F),open(F,read,S), readall(S,M).
 fl(X) :- nonvar(X), fl(X,M), maplist(portray_clause,M).
+fl(X) :- var(X), find(endswith('.pl')).
