@@ -18,6 +18,3 @@ cat(F,L) :- open(F,read,S), slurp(S,L).
 cat(F) :- nonvar(F), cat(F,L), maplist(println,L),!.
 cat(F) :- var(F), slurp(user_input, F).
 cat :- slurp(user_input,L), maplist(println,L).
-
-%file listing, with output similar to listing/1.
-fl(X) :- atom_concat(X, '.pl', F),open(F,read,S), readall(S,M), maplist(portray_clause,M).
