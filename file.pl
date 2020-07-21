@@ -34,8 +34,8 @@ find(P,N,D,Fs) :-
 	append(F,R,Fs).
 
 find(P,N,D) :- nonvar(D), find(P,N,D,F), maplist(puts,F).
-find(P,D,O) :- var(O), find(P,D,'.',O).
-find(P,D) :- nonvar(D), find(P,1,D,F), maplist(puts,F).
+find(P,D,O) :- var(O), find(P,D,1,O).
+find(P,D) :- nonvar(D), find(P,D,'.',F), maplist(puts,F).
 find(P,O) :- var(O), find(P,1,'.',O).
 find(P) :- nonvar(P), find(P,'.').
 find(O) :- var(O), find(atom,'.').
