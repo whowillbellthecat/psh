@@ -16,14 +16,12 @@ lsd :- lsd('.').
 cd(X) :- change_directory(X). cd :- cd('.').
 pwd(X) :- working_directory(X). pwd :- pwd(X), puts(X).
 
-% todo: fix directory being called without full filepath?
-% need to use atom_concat to prepend paths
 % todo : add unlimited depth
 
 find(_,0,[],[]).
-%find(P,0,[D|Ds],R) :- (call(P,D)->R=[D|Fs];R=Fs), find(P,Ds, 0, Fs).
 find(P,0,D,R) :- atom(D),(call(P,D)->R=[D];R=[]), !.
 find(P,N,D,Fs) :-
+	callable(P),
 	atom(D),
 	N > 0,
 	directory_files(D,T),
@@ -36,5 +34,8 @@ find(P,N,D,Fs) :-
 	append(F,R,Fs).
 
 find(P,N,D) :- nonvar(D), find(P,N,D,F), maplist(puts,F).
+find(P,D,O) :- var(O), find(P,D,'.',O).
 find(P,D) :- nonvar(D), find(P,1,D,F), maplist(puts,F).
+find(P,O) :- var(O), find(P,1,'.',O).
 find(P) :- nonvar(P), find(P,'.').
+find(O) :- var(O), find(atom,'.').
