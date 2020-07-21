@@ -43,6 +43,6 @@ find(O) :- var(O), find(atom,1).
 
 %file listing, with output similar to listing/1.
 fl(X,M) :- atom_concat(X, '.pl', F),open(F,read,S), readall(S,M).
-fl(X) :- nonvar(X), fl(X,M), maplist(portray_clause,M).
+fl(X) :- nonvar(X), fl(X,M), maplist(portray_clause,M),!.
 fl(X) :- var(X), find(endswith('.pl'),X).
 fl :- fl(X), maplist(puts,X).
