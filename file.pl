@@ -35,6 +35,6 @@ find(P,N,D,Fs) :-
 	flatten(Fs0,R),
 	append(F,R,Fs).
 
-find(P,N,D) :- find(P,N,D,F), maplist(puts,F).
-find(P,D) :- find(P,1,D,F), maplist(puts,F).
-find(P) :- find(P,'.').
+find(P,N,D) :- nonvar(D), find(P,N,D,F), maplist(puts,F).
+find(P,D) :- nonvar(D), find(P,1,D,F), maplist(puts,F).
+find(P) :- nonvar(P), find(P,'.').
