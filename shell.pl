@@ -7,7 +7,12 @@
 :- op(1150, xfx, <=).
 :- op(1150, xfx, <--).
 
+:- op(799, xfx, via).
+via(X,F,R) :- R <-- fl F <> filter(cf(X)).
+X via F :- maplist(portray_clause) <-- X via F.
+
 X <- P :- call(P,X).
+
 Z <-- P :- \+ functor(P,(<>),_), var(Z), call(P,Z).
 Z <-- P :- functor(P,(<>),_), var(Z), ([V|Vs] <= P), call(V,X), maplist(call,Vs,[X|Ts],Y), reverse(Y,[Z|Zs]), reverse(Zs,Ts).
 Z <-- P :- callable(Z), (R <-- P), call(Z,R), !. %may not be best place for cut?
