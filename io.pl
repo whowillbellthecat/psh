@@ -18,6 +18,6 @@ slurp(S,M) :- gets(S,L), (L= -1->M=[];M=[L|Ls],slurp(S,Ls)), !.
 readall(S,M) :- read(S,L), (L= end_of_file->M=[];M=[L|Ls],readall(S,Ls)), !.
 
 cat(F,L) :- open(F,read,S), slurp(S,L).
-cat(F) :- nonvar(F), cat(F,L), maplist(println,L),!.
-cat(F) :- var(F), slurp(user_input, F).
-cat :- slurp(user_input,L), maplist(println,L).
+cat F :- nonvar(F), cat(F,L), maplist(println,L),!.
+cat F :- var(F), slurp(user_input, F).
+(cat) :- slurp(user_input,L), maplist(println,L).
