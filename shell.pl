@@ -24,3 +24,10 @@ V <= (P<>Q<>R) :- V <= (P<>[Q|[R]]).
 [V] <= V :- \+ list(V), \+ functor(V,(<>),_).
 
 P <> Q :- (X <-- P <> Q), (list(X)->maplist(puts,X);puts(X)), !.
+
+prompt(X,Y) :- repeat,print(X),read(Y),(Y=end_of_file->halt;true).
+
+start(X) :- prompt(X,Y),call(Y),start(X).
+start :- start('$ ').
+
+:- initialization(start).
