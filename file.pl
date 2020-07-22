@@ -2,6 +2,13 @@
 :- include('io.pl').
 :- include('atom.pl').
 
+:- op(800, fx, ls).
+:- op(800, fx, lsd).
+:- op(800, fx, cd).
+:- op(800, fx, pwd).
+:- op(800, fx, find).
+:- op(800, fx, fl).
+
 hidden_file_path(P) :- atom_concat('.',_,P).
 directory(D) :- file_property(D,type(directory)).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?

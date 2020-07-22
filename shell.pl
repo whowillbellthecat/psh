@@ -1,12 +1,5 @@
 :- include('file.pl').
 
-:- op(800, fx, cd).
-:- op(800, fx, ls).
-:- op(800, fx, lsd).
-:- op(800, fx, find).
-:- op(800, fx, pwd).
-:- op(800, fx, cat).
-:- op(800, fx, fl).
 :- op(950, xfx, <-).
 :- op(850, yfx, '<>').
 :- op(1150, xfx, <=).
