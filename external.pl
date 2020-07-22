@@ -23,6 +23,8 @@ commit :- spawn(git, [commit]).
 status :- spawn(git, [status,'-s']).
 add [X|Xs] :- spawn(git, [add,X|Xs]).
 add X :- atom(X), spawn(git, [add,X]).
-diff [X|Xs] :- spawn(git, [diff,X|Xs]).
-diff X :- atom(X), spawn(git, [diff,X]).
-(diff) :- spawn(git, [diff]).
+diff [X|Xs] :- spawn(git, ['-P',diff,X|Xs]).
+diff X :- atom(X), spawn(git, ['-P',diff,X]).
+(diff) :- spawn(git, ['-P',diff]).
+
+log :- spawn(git, ['-P',log, '--oneline']).
