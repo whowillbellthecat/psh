@@ -1,4 +1,5 @@
 :- include('file.pl').
+:- include('external.pl').
 
 :- op(950, xfx, <-).
 :- op(850, yfx, '<>').
