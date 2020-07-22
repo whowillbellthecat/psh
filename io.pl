@@ -1,5 +1,5 @@
 
-:- op(800, fx, cat).
+:- op(100, fx, cat).
 
 puts(M,S) :- write(M,S), nl(S).
 puts(M) :- write(M), nl.

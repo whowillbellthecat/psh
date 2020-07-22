@@ -3,11 +3,11 @@
 :- include('misc.pl').
 
 :- op(950, xfx, <-).
-:- op(850, yfx, '<>').
-:- op(1150, xfx, <=).
-:- op(1150, xfx, <--).
-
+:- op(650, yfx, '<>').
+:- op(950, xfx, <=).
+:- op(950, xfx, <--).
 :- op(799, xfx, via).
+
 via(X,F,R) :- R <-- fl F <> filter(cf(X)).
 X via F :- maplist(portray_clause) <-- X via F.
 

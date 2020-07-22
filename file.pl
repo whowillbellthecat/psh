@@ -2,11 +2,11 @@
 :- include('io.pl').
 :- include('atom.pl').
 
-:- op(800, fx, ls).
-:- op(800, fx, lsd).
-:- op(800, fx, cd).
-:- op(800, fx, pwd).
-:- op(800, fx, fl).
+:- op(100, fx, ls).
+:- op(100, fx, lsd).
+:- op(100, fx, cd).
+:- op(100, fx, pwd).
+:- op(100, fx, fl).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
 directory(D) :- file_property(D,type(directory)).
