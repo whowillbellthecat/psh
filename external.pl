@@ -13,3 +13,5 @@ file(X) :- spawn(file, [X]).
 
 make T :- atom(T), spawn(make, [T]).
 (make) :- spawn(make, []).
+
+clear :- spawn(clear,[]).
