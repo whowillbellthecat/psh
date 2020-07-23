@@ -12,6 +12,7 @@ vi F :- spawn(vi, [F]).
 file(X,M) :- atom_concat('file ',X,C), popen(C,read,S), gets(S,M0), close(S),atom_codes(M,M0).
 file(X) :- spawn(file, [X]).
 
+make install :- spawn(doas, [make, install]), !.
 make T :- atom(T), spawn(make, [T]).
 (make) :- spawn(make, []).
 
