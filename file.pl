@@ -1,12 +1,13 @@
 :- include('list.pl').
 :- include('io.pl').
 :- include('atom.pl').
+:- include('pipe.pl').
 
 :- op(100, fx, ls).
 :- op(100, fx, lsd).
 :- op(100, fx, cd).
 :- op(100, fx, pwd).
-:- op(100, fx, fl).
+:- op(401, fx, fl).
 :- op(401, fx, where).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
@@ -49,8 +50,10 @@ find(P) :- nonvar(P), find(P,1), !.
 find(O) :- var(O), find(atom,1).
 
 %file listing, with output similar to listing/1.
-fl(X,M) :- atom_concat(X, '.pl', F),open(F,read,S), readall(S,M).
-fl(X) :- nonvar(X), fl(X,M), maplist(portray_clause,M),!.
+fl(X,M) :- atom(X), \+ endswith('.pl',X), atom_concat(X, '.pl', F),open(F,read,S), readall(S,M).
+fl(F,M) :- atom(F), endswith('.pl',F),open(F,read,S), readall(S,M).
+fl(+X/N,M) :- M <-- where X/N <> via(X/N).
+fl X :- nonvar(X), fl(X,M), maplist(portray_clause,M),!.
 fl X :- var(X), find(endswith('.pl'),X).
 (fl) :- fl(X), maplist(puts,X).
 
