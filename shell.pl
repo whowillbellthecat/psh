@@ -2,10 +2,6 @@
 :- include('external.pl').
 :- include('misc.pl').
 
-:- op(950, xfx, <-).
-:- op(650, yfx, '<>').
-:- op(950, xfx, <=).
-:- op(950, xfx, <--).
 :- op(799, xfx, via).
 :- op(401, fx, edit).
 
@@ -17,20 +13,6 @@ edit(+P/N) :- atom(P), where(P/N, F), vi F.
 %edit(X via F) :-  % for this to work I'll need a way to reinsert edited content into the file.
 	% what I need is a bidirectional mapping to/from the concise notation I prefer to use so
 	% that I can map portray_clause<->concise notation. Though without care comments will end up being removed.
-
-X <- P :- call(P,X).
-
-Z <-- P :- \+ functor(P,(<>),_), var(Z), call(P,Z).
-Z <-- P :- functor(P,(<>),_), var(Z), ([V|Vs] <= P), call(V,X), maplist(call,Vs,[X|Ts],Y), reverse(Y,[Z|Zs]), reverse(Zs,Ts).
-Z <-- P :- callable(Z), (R <-- P), call(Z,R), !. %may not be best place for cut?
-
-V <= (P<>Q<>[R|Rs]) :- V <= (P<>[Q,R|Rs]).
-V <= (P<>Q<>R) :- V <= (P<>[Q|[R]]).
-[P|Q] <= (P<>Q) :- list(Q), \+ functor(P,(<>),_), \+ functor(Q,(<>),_).
-[P|[Q]] <= (P<>Q) :- \+ list(Q), \+ functor(P,(<>),_), \+ functor(Q,(<>),_).
-[V] <= V :- \+ list(V), \+ functor(V,(<>),_).
-
-P <> Q :- (X <-- P <> Q), (list(X)->maplist(puts,X);puts(X)), !.
 
 prompt(X,Y) :- repeat,print(X),read(Y),(Y=end_of_file->halt;true).
 
