@@ -1,11 +1,12 @@
 
 :- op(100, fx, cat).
 
-puts(M,S) :- write(M,S), nl(S).
+puts(S,M) :- write(S,M), nl(S).
 puts(M) :- write(M), nl.
 
-println([]) :- put_code(10).
-println([M|Ms]) :- put_code(M),println(Ms).
+println(S,[]) :- put_code(S,10).
+println(S,[M|Ms]) :- put_code(S,M),println(S,Ms).
+println(M) :- println(user_output, M).
 
 gets(S,M) :-
 	get_code(S, C),

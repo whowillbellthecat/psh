@@ -4,9 +4,7 @@
 :- op(100, fx, add).
 :- op(100, fx, diff).
 
-% todo : vi/2 should spawn vi with a temporary file, and then unify the 2nd var with contents of that file.
-%    by default as a list of lines but possibly consider vi/3 with an early param specifying the mode/interpretation
-
+vi(F,M) :- temporary_file('',psh_,T), cat(F, A), open(T,write,S), maplist(println(S),A), close(S), vi T, cat(T,M), unlink(T).
 vi F :- spawn(vi, [F]).
 (vi) :- spawn(vi, []).
 
