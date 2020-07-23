@@ -1,6 +1,5 @@
-
 shell: *.pl
-	gplc shell.pl
+	gplc psh.pl
 
 clean:
-	rm shell
+	rm psh
