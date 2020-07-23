@@ -7,13 +7,13 @@
 :- op(950, xfx, <=).
 :- op(950, xfx, <--).
 :- op(799, xfx, via).
-:- op(100, fx, edit).
+:- op(401, fx, edit).
 
 via(X,F,R) :- R <-- fl F <> filter(cf(X)).
 X via F :- maplist(portray_clause) <-- X via F.
 
-edit(T) :- atom(T), atom_concat(T,'.pl',F), vi F.
-%edit(-F) :-  figure out what file its from and edit that ? or edit listing then copy into file
+edit T :- atom(T), atom_concat(T,'.pl',F), vi F.
+edit(+P/N) :- atom(P), where(P/N, F), vi F.
 %edit(X via F) :-  % for this to work I'll need a way to reinsert edited content into the file.
 	% what I need is a bidirectional mapping to/from the concise notation I prefer to use so
 	% that I can map portray_clause<->concise notation. Though without care comments will end up being removed.
