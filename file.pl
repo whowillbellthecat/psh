@@ -7,6 +7,7 @@
 :- op(100, fx, cd).
 :- op(100, fx, pwd).
 :- op(100, fx, fl).
+:- op(401, fx, where).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
 directory(D) :- file_property(D,type(directory)).
@@ -52,3 +53,6 @@ fl(X,M) :- atom_concat(X, '.pl', F),open(F,read,S), readall(S,M).
 fl(X) :- nonvar(X), fl(X,M), maplist(portray_clause,M),!.
 fl X :- var(X), find(endswith('.pl'),X).
 (fl) :- fl(X), maplist(puts,X).
+
+where(X/N,F) :- functor(C,X,N), predicate_property(C,prolog_file(F)).
+where (X/N) :- where(X/N,F), puts(F).
