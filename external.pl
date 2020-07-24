@@ -4,9 +4,15 @@
 :- op(100, fx, add).
 :- op(100, fx, diff).
 
-vi(F,M) :- temporary_file('',psh_,T), cat(F, A), open(T,write,S), maplist(println(S),A), close(S), vi T, cat(T,M), unlink(T).
+% is it possible to always detect when I want to interpret first arg as codes vs filename vs prolog terms?
+% I should consider folding ivi/edit/vi into the fewer predicates.
+vi(F,M) :- atom(F), cat(F, A), vi(A,M).
+vi(D,M) :- \+ atom(D),temporary_file('',psh_,T),open(T,write,S),maplist(println(S),D),close(S),vi T,cat(T,M),unlink(T),!.
 vi F :- spawn(vi, [F]).
 (vi) :- spawn(vi, []).
+
+ivi(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),D),close(S),vi T, open(T,read,S0),
+	readall(S0,M),close(S0),unlink(T),!.
 
 %is using an atom as the response appropriate here?
 file(X,M) :- atom_concat('file ',X,C), popen(C,read,S), gets(S,M0), close(S),atom_codes(M,M0).
