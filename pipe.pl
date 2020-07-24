@@ -2,8 +2,13 @@
 :- op(650, yfx, '<>').
 :- op(950, xfx, <=).
 :- op(950, xfx, <--).
+:- op(100, fx, $).
 
-X <- P :- call(P,X).
+$X :- puts <-- g_read(X).
+$(X,Y) :- g_read(X,Y).
+
+X <- P :- var(X), call(P,X).
+$X <- P :- atom(X), call(P,Y), g_assign(X,Y).
 
 Z <-- P :- \+ functor(P,(<>),_), var(Z), call(P,Z).
 Z <-- P :- functor(P,(<>),_), var(Z), ([V|Vs] <= P), call(V,X), maplist(call,Vs,[X|Ts],Y), reverse(Y,[Z|Zs]), reverse(Zs,Ts).
