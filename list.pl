@@ -18,3 +18,9 @@ aplist(P,X,Y,[Z|Zs]) :- length([Z|Zs],N), ground(Y), repeat(Y,N,R), maplist(P,X,
 
 atom_join([X],_,X).
 atom_join([X|Xs],C,R) :- atom_join(Xs,C,Rs),atom_concat(X,C,R0),atom_concat(R0,Rs,R).
+
+limit(C,X,Y) :- C < 0, reverse(X,X0), C0 is abs(C), limit(C0,X0,Y).
+limit(C,[X|Xs],[X|Y]) :- C > 0, C0 is C-1, limit(C0,Xs,Y).
+limit(0,_,[]).
+limit(_,[],[]).
+limit(C,X) :- limit(C,X,Y), maplist(puts,Y).
