@@ -23,4 +23,7 @@ limit(C,X,Y) :- C < 0, reverse(X,X0), C0 is abs(C), limit(C0,X0,Y).
 limit(C,[X|Xs],[X|Y]) :- C > 0, C0 is C-1, limit(C0,Xs,Y).
 limit(0,_,[]).
 limit(_,[],[]).
-limit(C,X) :- limit(C,X,Y), maplist(puts,Y).
+limit(C,X) :- \+ list(C), limit(C,X,Y), maplist(puts,Y).
+limit(X,Y) :- var(Y), limit(10,X,Y).
+limit(X,Y) :- list(X), limit(10,X,Y).
+limit(X) :- limit(10,X).
