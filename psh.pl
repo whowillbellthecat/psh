@@ -14,7 +14,7 @@ edit(+P/N) :- atom(P), where(P/N, F), vi F.
 	% what I need is a bidirectional mapping to/from the concise notation I prefer to use so
 	% that I can map portray_clause<->concise notation. Though without care comments will end up being removed.
 
-prompt(X,Y) :- repeat,print(X),read(Y),(Y=end_of_file->halt;true).
+prompt(X,Y) :- repeat,print(X),read(Y),nonvar(Y),(Y=end_of_file->halt;true).
 
 start(X) :- prompt(X,Y),call(Y),start(X).
 start :- start('$ ').
