@@ -34,3 +34,5 @@ diff X :- atom(X), spawn(git, ['-P',diff,X]).
 
 log :- spawn(git, ['-P',log, '--oneline']).
 log(M) :- atom_join(['git','-P',log,'--oneline'],' ',C), popen(C,read,S), slurp(S,M),close(S).
+
+less(M) :- popen(less,write,S),maplist(println(S),M),close(S).
