@@ -1,6 +1,6 @@
 .POSIX:
 PREFIX=/usr/local
-BIN=$(PREFIX)/bin/
+BIN=$(DESTDIR)$(PREFIX)/bin
 INSTALL=install
 
 psh: *.pl
