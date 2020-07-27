@@ -4,14 +4,12 @@ is present currently might get thrown right out; there is also quite a bit
 of missing functionality - job control isn't implemented, crtl-C causes psh
 to exit, etc.
 
-psh is implemented using gprolog and uses op/3 to define the operators it
-uses for its syntax. In particular, the primary difference between the
-psh repl (besides additional predicates) and gprolog's toplevel is that
-variable bindings are not shown and the user is not prompted to decide whether
-to search for alternative solutions. All the usual prolog predicates should
-still work as expected though, including stuff like [user], and the gprolog
-toplevel can be accessed still with the top_level predicate. Like prolog, all
-expressions must be terminated by the '.' character and dots in filenames must be quoted.
+psh can be built by running `make` (with any posix make). gplc, the gprolog
+compiler, is the only build dependency. Some psh commands assume other runtime
+dependencies, but these are mostly obvious (e.g, vi/2 assumes `vi` is installed).
+
+psh uses op/3 to define operators for its syntax (and uses call/1 on inputs).
+Unlike the prolog top_level, psh does not show variable bindings or prompt for alternate solutions.
 
 psh pipes have the following syntax (note these are predicate compositions not pipes
 between external processes):
@@ -43,8 +41,7 @@ Additionally a syntax somewhat similar to posix shell variables is supported:
 Currently substition semantics for e.g., global variables are not supported.
 
 psh attempts (probably poorly) to define predicates so that if p/n for some
-n outputs to the terminal, then p/(n+1) 'outputs' to the last variable, with
-checks where possible to allow for variable options.
+n outputs to the terminal, then p/(n+1) 'outputs' to the last variable.
 
 Many routines, such as cd/pwd/vi/file are set as unary operators and need to
 be surrounded in parenthesis for those atoms to be used. (I may or may not
@@ -98,13 +95,8 @@ Examples:
 log <> length.                                      % how many git commits have been made?
 fl (file).                                          % output the code in file.pl via portray_clause
 fl +(fl)/2 <> length.                               % how many clauses does fl/2 have as defined?
-find(endswith('.pdf')) <> filter(startswith('3')).  % find files starting with 3 and ending with pdf
+find(endswith('.pdf')) <> filter(startswith('3')).  % find files starting with 3 and ending with '.pdf'
 
-% read a list of pdfs starting with 3 and ending with '.pdf' into a variable, edit its contents with vi,
-% then assign the edited result to the global variable test (read back as a list via read/2).
+% read a list of files starting with '3' and ending with '.pdf' into a variable, edit its contents with vi,
+% and then assign the edited result to the global variable test (read back in as a list via read/2).
 test <- ivi <-- find(endswith('.pdf')) <> filter(startswith('3')).
-
---
-By default, gprolog's linedit is used for line editing, but it can be disabled by setting LINEDIT=no
-(personally I use rlwrap for vi-like keybindings);see the gprolog manual for other environment options,
-which psh naturally respects.
