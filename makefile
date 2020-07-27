@@ -1,8 +1,9 @@
-PREFIX?=/usr/local
-BIN?=$(PREFIX)/bin/
+.POSIX:
+PREFIX=/usr/local
+BIN=$(PREFIX)/bin/
 INSTALL=install
 
-shell: *.pl
+psh: *.pl
 	gplc psh.pl
 
 clean:
