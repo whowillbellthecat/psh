@@ -1,0 +1,110 @@
+psh is a toy shell/personal experiment. I haven't quite found the correct
+principles in terms of which it should be constructed, so all the code that
+is present currently might get thrown right out; there is also quite a bit
+of missing functionality - job control isn't implemented, crtl-C causes psh
+to exit, etc.
+
+psh is implemented using gprolog and uses op/3 to define the operators it
+uses for its syntax. In particular, the primary difference between the
+psh repl (besides additional predicates) and gprolog's toplevel is that
+variable bindings are not shown and the user is not prompted to decide whether
+to search for alternative solutions. All the usual prolog predicates should
+still work as expected though, including stuff like [user], and the gprolog
+toplevel can be accessed still with the top_level predicate. Like prolog, all
+expressions must be terminated by the '.' character and dots in filenames must be quoted.
+
+psh pipes have the following syntax (note these are predicate compositions not pipes
+between external processes):
+	p <> q <> r.   %% equivilent to p(X), q(X,Y), r(Y,Z), puts(Z) (with printing
+                       %% automatically lifted over lists)
+
+        X <- p.        %% call(p,X).
+	var <- p.      %% call(p,X), g_assign(var,X). (i.e, assign global variable)
+
+	X <-- p.       %% call(p,X).
+	X <-- p <> q.  %% call(p,Y), call(q,Y,X).
+	r <-- p <> q.  %% call(p,Y), call(q,Y,X), call(r,X).
+
+Note that one of the limitations of the current syntax is that routines
+which require variables to be instatiated early may throw errors,
+a routine used such as r in (r <-- p <> q) will however have its dependencies
+appropriately ordered; for example, if r and s are routines which require
+instatiated variables, and p and q which do not, then the following will avoid
+exceptions:
+	s <-- r <-- p <> q.
+
+The precedence for these operators is set to be lower than comma so that
+they can be used such as in (X <- p, Y <- q(X)).
+
+Additionally a syntax somewhat similar to posix shell variables is supported:
+	$var       %% g_read(var,X),puts(X). (i.e, print global variable)
+	$var <> p. %% g_read(var,X),call(p,X).
+
+Currently substition semantics for e.g., global variables are not supported.
+
+psh attempts (probably poorly) to define predicates so that if p/n for some
+n outputs to the terminal, then p/(n+1) 'outputs' to the last variable, with
+checks where possible to allow for variable options.
+
+Many routines, such as cd/pwd/vi/file are set as unary operators and need to
+be surrounded in parenthesis for those atoms to be used. (I may or may not
+change this at some point, I'm not sure yet how I feel about the relative convience
+it offers). Notable routines include:
+
+vi filename.       % edit filename in vi
+ivi(data,O)        % edit data as list of prolog clauses in vi then read/2 into O.
+fl.                % list files ending in .pl
+fl +f/n.           % display code from the source file for functor f with arity n
+fl filename.       % show the source of filename.pl using portray_clause
+edit filename.     % edit filename.pl in vi
+edit +f/n.         % edit the source file for functor f with arity n in vi
+cd dir.            % change directory to dir
+pwd.               % working directory
+ls.                % list files not starting with '.'
+lsd.               % list directories
+less(list).        % display list of codes in `less`
+find(p).           % find files 1 level deep satisfying predicate p/1
+find(p,depth).     % find files upto depth satisfying predicate p/1
+find(p,depth,dir). % find files upto depth satisfying predicate p/1 in dir
+filter(p,dom,sat). % sat is a list containing solutions of p constrained to domain dom
+                   %  bug : some predicates can fail early and only return the first match. I should look into this.
+endswith(str,x).   % x ends with str
+startswith(str,x). % x starts with str
+limit(list).       % output first 10 items in list
+limit(c,list).     % output first c items in list (or last c items if negative).
+pred via filename. % display the source for predicate pred as defined in filename
+where p/n.         % display the path to the file that defines predicate p with arity n
+cat filename.      % this is badly named -- it only outputs filename and doesn't concatentate; sorry not sorry
+cat F.             % read from stdin into variable F
+cat(filename,M).   % read filename into variable M (as a list of codes).
+println(S,codes).  % print codes to stream S
+println(codes).    % print codes to stdout
+puts(S,msg).       % put msg to stream S (in internal encoding)
+puts(msg).         % put msg to stdout (in internal encoding)
+make.              % run `make`
+make install.      % run `doas make install` (I should probably have this check for SUDO= or something)
+make target.       % run `make target`
+log.               % git -P log --oneline
+add filename.      % git add filename
+status.            % git status -s
+commit             % git commit
+diff.              % git -P diff
+diff whatever.     % git -P diff whatever
+file somefile.     % run `file somefile`
+clear.             % you have three guesses
+
+Examples:
+--
+log <> length.                                      % how many git commits have been made?
+fl (file).                                          % output the code in file.pl via portray_clause
+fl +(fl)/2 <> length.                               % how many clauses does fl/2 have as defined?
+find(endswith('.pdf')) <> filter(startswith('3')).  % find files starting with 3 and ending with pdf
+
+% read a list of pdfs starting with 3 and ending with '.pdf' into a variable, edit its contents with vi,
+% then assign the edited result to the global variable test (read back as a list via read/2).
+test <- ivi <-- find(endswith('.pdf')) <> filter(startswith('3')).
+
+--
+By default, gprolog's linedit is used for line editing, but it can be disabled by setting LINEDIT=no
+(personally I use rlwrap for vi-like keybindings);see the gprolog manual for other environment options,
+which psh naturally respects.
