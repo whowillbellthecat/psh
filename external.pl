@@ -32,6 +32,7 @@ add X :- atom(X), spawn(git, [add,X]).
 diff [X|Xs] :- spawn(git, ['-P',diff,X|Xs]).
 diff X :- atom(X), spawn(git, ['-P',diff,X]).
 (diff) :- spawn(git, ['-P',diff]).
+push :- spawn(git, [push]).
 
 log :- spawn(git, ['-P',log, '--oneline']).
 log(M) :- atom_join(['git','-P',log,'--oneline'],' ',C), popen(C,read,S), slurp(S,M),close(S).
