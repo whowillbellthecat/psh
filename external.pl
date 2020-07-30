@@ -3,6 +3,7 @@
 :- op(100, fx, file).
 :- op(100, fx, add).
 :- op(100, fx, diff).
+:- op(100, fx, man).
 
 % is it possible to always detect when I want to interpret first arg as codes vs filename vs prolog terms?
 % I should consider folding ivi/edit/vi into the fewer predicates.
@@ -36,3 +37,4 @@ log :- spawn(git, ['-P',log, '--oneline']).
 log(M) :- atom_join(['git','-P',log,'--oneline'],' ',C), popen(C,read,S), slurp(S,M),close(S).
 
 less(M) :- popen(less,write,S),maplist(println(S),M),close(S).
+man(M) :- spawn(man,[M]).
