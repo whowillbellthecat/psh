@@ -89,6 +89,10 @@ diff.              % git -P diff
 diff whatever.     % git -P diff whatever
 file somefile.     % run `file somefile`
 clear.             % you have three guesses
+rot(P,X,Y,Z).      % call(P,Z,X,Y). n.b. this is backwards w.r.t. forth
+swap(P,X,Y).       % call(P,Y,X).
+dup(P,X,X).        % call(P,X).
+drop(P,X).         % call(P,X,_).
 
 Examples:
 --
@@ -100,3 +104,6 @@ find(endswith('.pdf')) <> filter(startswith('3')).  % find files starting with 3
 % read a list of files starting with '3' and ending with '.pdf' into a variable, edit its contents with vi,
 % and then assign the edited result to the global variable test (read back in as a list via read/2).
 test <- ivi <-- find(endswith('.pdf')) <> filter(startswith('3')).
+
+% output list of filenames that would be captured by the regex `(.*).pdf$'
+find(drop(rot(atom_concat,'.pdf'))) <> maplist(rot(atom_concat,'.pdf')).
