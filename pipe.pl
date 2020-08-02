@@ -23,3 +23,4 @@ V <= (P<>Q<>R) :- V <= (P<>[Q|[R]]).
 [V] <= V :- \+ list(V), \+ functor(V,(<>),_).
 
 P <> Q :- (X <-- P <> Q), (list(X)->maplist(puts,X);puts(X)), !.
+<>(P,Q,R) :- R <-- P <> Q.
