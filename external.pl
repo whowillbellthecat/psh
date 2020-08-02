@@ -34,8 +34,10 @@ diff X :- atom(X), spawn(git, ['-P',diff,X]).
 (diff) :- spawn(git, ['-P',diff]).
 push :- spawn(git, [push]).
 
+log(D,M) :- nonvar(D),atom_concat('--git-dir=',D,T),atom_join([git,T,'-P',log,'--oneline'],' ',C),popen(C,read,S),slurp(S,M),close(S).
+log(D) :- nonvar(D), atom_concat('--git-dir=',D,T), spawn(git,[T,'-P',log,'--oneline']).
+log(M) :- var(M),atom_join([git,'-P',log,'--oneline'],' ',C), popen(C,read,S), slurp(S,M),close(S).
 log :- spawn(git, ['-P',log, '--oneline']).
-log(M) :- atom_join(['git','-P',log,'--oneline'],' ',C), popen(C,read,S), slurp(S,M),close(S).
 
 less(M) :- popen(less,write,S),maplist(println(S),M),close(S).
 man(M) :- spawn(man,[M]).
