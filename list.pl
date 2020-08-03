@@ -27,3 +27,9 @@ limit(C,X) :- \+ list(C), limit(C,X,Y), maplist(puts,Y).
 limit(X,Y) :- var(Y), limit(10,X,Y).
 limit(X,Y) :- list(X), limit(10,X,Y).
 limit(X) :- limit(10,X).
+
+zip([X|Xs],[Y|Ys], [X-Y|Zs]) :- zip(Xs,Ys,Zs).
+zip([],[],[]).
+
+zipWith(P,[X|Xs],[Y|Ys],[Z|Zs]) :- call(P,X,Y,Z), zipWith(P,Xs,Ys,Zs).
+zipWith(_,[],[],[]).
