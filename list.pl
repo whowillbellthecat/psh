@@ -1,3 +1,8 @@
+:- op(649, yf, each).
+
+each(P,Q,R) :- maplist(P,Q,R).
+each(P,Q) :- maplist(puts) <-- maplist(P,Q).
+
 % Y is a list consisting of N repetitions of X.
 repeat(_,0,[]).
 repeat(X,N,[X|Y]) :- N>0, N0 is N-1, repeat(X,N0,Y).

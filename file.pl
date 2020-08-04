@@ -1,7 +1,7 @@
+:- include('pipe.pl').
 :- include('list.pl').
 :- include('io.pl').
 :- include('atom.pl').
-:- include('pipe.pl').
 
 :- op(100, fx, ls).
 :- op(100, fx, lsd).
