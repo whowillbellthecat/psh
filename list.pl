@@ -1,7 +1,11 @@
 :- op(649, yf, each).
+:- op(400, yfx, &=).
 
 each(P,Q,R) :- maplist(P,Q,R).
 each(P,Q) :- maplist(puts) <-- maplist(P,Q).
+
+P &= Q :- P <> filter(Q).
+&=(P,Q,R) :- <>(P,filter(Q),R).
 
 % Y is a list consisting of N repetitions of X.
 repeat(_,0,[]).
