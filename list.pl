@@ -1,5 +1,5 @@
 :- op(649, yf, each).
-:- op(400, yfx, &=).
+:- op(648, yfx, &=).
 :- op(399, yfx, @).
 
 each(P,Q,R) :- maplist(P,Q,R).
