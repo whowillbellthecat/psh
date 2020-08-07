@@ -55,7 +55,7 @@ order(X,Y) :- Y <- swap(zip(_)) <-- keysort <-- zip(X) <-- reverse <-- iota <-- 
 
 group(X,Y):-S<-sort(X),M<-msort(X),length(S,A),repeat([],A,I),N<-order(X),group(S,M,N,I,Y).
 group([X|Xs],[X|Ys],[N|Ns],[I|Is],Zs) :- group([X|Xs],Ys,Ns,[[N|I]|Is],Zs).
-group([X|Xs],[Y|Ys],[N|Ns],[I|Is],[I0|Zs]) :- X =\= Y, reverse(I,I0), group(Xs,[Y|Ys],[N|Ns],Is,Zs).
-group([_],[],[],X,X).
+group([X|Xs],[Y|Ys],[N|Ns],[I|Is],[I0|Zs]) :- X \= Y, reverse(I,I0), group(Xs,[Y|Ys],[N|Ns],Is,Zs).
+group([_],[],[],[X],[Y]) :- reverse(X,Y).
 
-groupby(X,Y,Z) :- group(Y,G), maplist(@(X),G,Z).
+groupby(X,Y,Z) :- group(X,G), maplist(@(Y),G,Z).
