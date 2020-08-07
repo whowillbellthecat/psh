@@ -58,4 +58,5 @@ group([X|Xs],[X|Ys],[N|Ns],[I|Is],Zs) :- group([X|Xs],Ys,Ns,[[N|I]|Is],Zs).
 group([X|Xs],[Y|Ys],[N|Ns],[I|Is],[I0|Zs]) :- X \= Y, reverse(I,I0), group(Xs,[Y|Ys],[N|Ns],Is,Zs).
 group([_],[],[],[X],[Y]) :- reverse(X,Y).
 
-groupby(X,Y,Z) :- group(X,G), maplist(@(Y),G,Z).
+groupby(X,Y,Z) :- list(X), group(X,G), maplist(@(Y),G,Z).
+groupby(X,Y,Z) :- callable(X), maplist(X,Y,Y0), groupby(Y0,Y,Z).
