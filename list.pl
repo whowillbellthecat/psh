@@ -1,5 +1,6 @@
 :- op(649, yf, each).
 :- op(400, yfx, &=).
+:- op(399, yfx, @).
 
 each(P,Q,R) :- maplist(P,Q,R).
 each(P,Q) :- maplist(puts) <-- maplist(P,Q).
@@ -42,3 +43,19 @@ zip([],[],[]).
 
 zipWith(P,[X|Xs],[Y|Ys],[Z|Zs]) :- call(P,X,Y,Z), zipWith(P,Xs,Ys,Zs).
 zipWith(_,[],[],[]).
+
+iota(0, []). % 1-indexed to match other prolog terms such as nth/3
+iota(A, [A|C]) :- A > 0, B is A - 1, iota(B, C).
+
+@(X,[Y|Ys],[Z|Zs]) :- nth(Y,X,Z), @(X,Ys,Zs).
+@(_,[],[]).
+X @ Y :- puts <-- X @ Y.
+
+order(X,Y) :- Y <- swap(zip(_)) <-- keysort <-- zip(X) <-- reverse <-- iota <-- length(X).
+
+group(X,Y):-S<-sort(X),M<-msort(X),length(S,A),repeat([],A,I),N<-order(X),group(S,M,N,I,Y).
+group([X|Xs],[X|Ys],[N|Ns],[I|Is],Zs) :- group([X|Xs],Ys,Ns,[[N|I]|Is],Zs).
+group([X|Xs],[Y|Ys],[N|Ns],[I|Is],[I0|Zs]) :- X =\= Y, reverse(I,I0), group(Xs,[Y|Ys],[N|Ns],Is,Zs).
+group([_],[],[],X,X).
+
+groupby(X,Y,Z) :- group(Y,G), maplist(@(X),G,Z).
