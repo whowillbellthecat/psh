@@ -60,3 +60,4 @@ group([_],[],[],[X],[Y]) :- reverse(X,Y).
 
 groupby(X,Y,Z) :- list(X), group(X,G), maplist(@(Y),G,Z).
 groupby(X,Y,Z) :- callable(X), maplist(X,Y,Y0), groupby(Y0,Y,Z).
+groupby(X,Y) :- groupby(X,Y) <> (=).
