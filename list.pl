@@ -7,8 +7,9 @@ each(Y with X,Q,R) :- P <- Y with X, maplist(call,P,Q,R),!.
 each(P,Q,R) :- maplist(P,Q,R).
 each(P,Q) :- maplist(puts) <-- maplist(P,Q).
 
-with(P,A,R) :- \+ list(A), P=.. P0, append(P0,[A],P1), R =.. P1.
-with(P,A,R) :- R <- =(A) <> with(P) each.
+with(P,A,R) :- list(A), R <- =(A) <> with_(P) each.
+with(P,A,R) :- \+ list(A), with_(P,A,R).
+with_(P,A,R) :- P=.. P0, append(P0,[A],P1), R =.. P1.
 
 P &= Q :- P <> filter(Q).
 &=(P,Q,R) :- <>(P,filter(Q),R).
