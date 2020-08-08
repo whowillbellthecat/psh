@@ -5,6 +5,8 @@
 :- op(100, fx, diff).
 :- op(100, fx, man).
 
+cmd(X,Y) :- atom_join(X,' ',C), popen(C,read,S), slurp(S,Y), close(S).
+
 % is it possible to always detect when I want to interpret first arg as codes vs filename vs prolog terms?
 % I should consider folding ivi/edit/vi into the fewer predicates.
 vi(F,M) :- atom(F), cat(F, A), vi(A,M).
