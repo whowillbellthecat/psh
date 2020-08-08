@@ -60,3 +60,6 @@ fl X :- var(X), find(endswith('.pl'),X).
 
 where(X/N,F) :- functor(C,X,N), predicate_property(C,prolog_file(F)).
 where (X/N) :- where(X/N,F), puts(F).
+
+whichline(X/N,L) :- functor(C,X,N), predicate_property(C,prolog_line(L)).
+whichline(X/N) :- puts <-- whichline(X/N).
