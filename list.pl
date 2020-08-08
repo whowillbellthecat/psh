@@ -38,6 +38,9 @@ limit(X,Y) :- var(Y), limit(10,X,Y).
 limit(X,Y) :- list(X), limit(10,X,Y).
 limit(X) :- limit(10,X).
 
+takeWhile(P,[X|Xs],[X|Ys]) :- call(P,X), takeWhile(P,Xs,Ys).
+takeWhile(P,[X|_],[]) :- \+ call(P,X).
+
 zip([X|Xs],[Y|Ys], [X-Y|Zs]) :- zip(Xs,Ys,Zs).
 zip([],[],[]).
 
