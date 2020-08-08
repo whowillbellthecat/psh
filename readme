@@ -45,7 +45,7 @@ n outputs to the terminal, then p/(n+1) 'outputs' to the last variable.
 
 Many routines, such as cd/pwd/vi/file are set as unary operators and need to
 be surrounded in parenthesis for those atoms to be used. (I may or may not
-change this at some point, I'm not sure yet how I feel about the relative convience
+change this at some point, I'm not sure yet how I feel about the relative convenience
 it offers). Notable routines include:
 
 vi filename.       % edit filename in vi
@@ -89,10 +89,27 @@ diff.              % git -P diff
 diff whatever.     % git -P diff whatever
 file somefile.     % run `file somefile`
 clear.             % you have three guesses
-rot(P,X,Y,Z).      % call(P,Z,X,Y). n.b. this is backwards w.r.t. forth
-swap(P,X,Y).       % call(P,Y,X).
-dup(P,X,X).        % call(P,X).
-drop(P,X).         % call(P,X,_).
+
+rot(P,X,Y,Z).       % call(P,Z,X,Y). n.b. this is backwards w.r.t. forth
+swap(P,X,Y).        % call(P,Y,X).
+dup(P,X,X).         % call(P,X).
+drop(P,X).          % call(P,X,_).
+zip(Xs,Ys,Zs).      % Zs is a list of `X-Y' pairs for X in Xs and Y in Ys
+zipWith(P,Xs,Ys,Zs) % Zs = [ Z | call(P,X,Y,Z), X <- Xs, Y <- Yz ].
+takeWhile(P,Xs,Ys)  % take elements from Xs until P fails
+
+iota(N,R).  % R is a list of elements N,..,1
+group(X,G). % indices of elements of X partitioned according to X/= and sorted according to the term ordering on X
+groupby(ListX,ListY,R). % partition X according to Y/=
+groupby(Pred,X,R).      % call(Pred,X,X0), and group X according to X0/=
+order(X,R). % R is a (origin 1) permutation vector which will sort the list X if applied to it
+R <- A@B    % R is A indexed by (origin 1) list of indices B
+
+Additional operators are defined for convenience:
+	p &= q             % defined as `p <> filter(q).'
+	p <> q each        % each modifies q(X,Y) to act instead as maplist(q,X,Y)
+	p <> q with l each % if l is a list of items l0,..,ln, `with' generates a list of closures
+                           % Q = q(l0),..,q(ln) which `each' modifies to act as maplist(call,Q,X,Y).
 
 Examples:
 --
@@ -103,7 +120,22 @@ find(endswith('.pdf')) <> filter(startswith('3')).  % find files starting with 3
 
 % read a list of files starting with '3' and ending with '.pdf' into a variable, edit its contents with vi,
 % and then assign the edited result to the global variable test (read back in as a list via read/2).
-test <- ivi <-- find(endswith('.pdf')) <> filter(startswith('3')).
+test <- ivi <-- find(endswith('.pdf')) &= startswith('3').
 
 % output list of filenames that would be captured by the regex `(.*).pdf$'
 find(drop(rot(atom_concat,'.pdf'))) <> maplist(rot(atom_concat,'.pdf')).
+
+% count number of commits since last push
+X <- cmd([git,'show-ref','origin/master']) <> nth(1) <> limit(7), log <> takeWhile(\+ prefix(X)) <> length.
+
+%%%%
+% example session demonstrating the use of some of the operators;
+% lines starting with `$' represent user input:
+%%%%
+$ test <- =([a,b,c,d,e]).
+$ L <- (iota <-- $test <> length) <> reverse, $test <> swap(repeat) with L each.
+[a]
+[b,b]
+[c,c,c]
+[d,d,d,d]
+[e,e,e,e,e]
