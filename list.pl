@@ -1,9 +1,14 @@
 :- op(649, yf, each).
+:- op(648, xfy, with).
 :- op(648, yfx, &=).
 :- op(399, yfx, @).
 
+each(Y with X,Q,R) :- P <- Y with X, maplist(call,P,Q,R),!.
 each(P,Q,R) :- maplist(P,Q,R).
 each(P,Q) :- maplist(puts) <-- maplist(P,Q).
+
+with(P,A,R) :- \+ list(A), P=.. P0, append(P0,[A],P1), R =.. P1.
+with(P,A,R) :- R <- =(A) <> with(P) each.
 
 P &= Q :- P <> filter(Q).
 &=(P,Q,R) :- <>(P,filter(Q),R).
