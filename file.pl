@@ -15,7 +15,8 @@ directory(D) :- file_property(D,type(directory)).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
 
 ls(D,F) :- directory_files(D,T), exclude(hidden_file_path,T,F).
-ls D :- ls(D,F), maplist(puts,F).
+ls O :- var(O), ls('.',O).
+ls D :- nonvar(D), ls(D,F), maplist(puts,F).
 (ls) :- ls '.'.
 
 lsd(D,F) :- ls(D,F0), filter(directory,F0,F).
