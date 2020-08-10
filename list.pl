@@ -11,6 +11,9 @@ with(P,A,R) :- list(A), R <- =(A) <> with_(P) each.
 with(P,A,R) :- \+ list(A), with_(P,A,R).
 with_(P,A,R) :- P=.. P0, append(P0,[A],P1), R =.. P1.
 
+fold(P, Acc, [X|Xs],R) :- call(P,Acc,X,Acc0), fold(P,Acc0,Xs,R).
+fold(_,Acc,[],Acc).
+
 P &= Q :- P <> filter(Q).
 &=(P,Q,R) :- <>(P,filter(Q),R).
 
