@@ -1,6 +1,7 @@
 :- op(649, yf, each).
 :- op(648, xfy, with).
 :- op(648, yfx, &=).
+:- op(620, yfx, fold).
 :- op(399, yfx, @).
 
 each(Y with X,Q,R) :- P <- Y with X, maplist(call,P,Q,R),!.
@@ -13,6 +14,7 @@ with_(P,A,R) :- P=.. P0, append(P0,[A],P1), R =.. P1.
 
 fold(P, Acc, [X|Xs],R) :- call(P,Acc,X,Acc0), fold(P,Acc0,Xs,R).
 fold(_,Acc,[],Acc).
+fold(P,[X|Xs],R) :- fold(P,X,Xs,R).
 
 P &= Q :- P <> filter(Q).
 &=(P,Q,R) :- <>(P,filter(Q),R).
