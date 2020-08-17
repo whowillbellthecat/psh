@@ -98,7 +98,6 @@ zip(Xs,Ys,Zs).      % Zs is a list of `X-Y' pairs for X in Xs and Y in Ys
 zipWith(P,Xs,Ys,Zs) % Zs = [ Z | call(P,X,Y,Z), X <- Xs, Y <- Yz ].
 takeWhile(P,Xs,Ys)  % take elements from Xs until P fails
 
-iota(N,R).  % R is a list of elements N,..,1
 group(X,G). % indices of elements of X partitioned according to X/= and sorted according to the term ordering on X
 groupby(ListX,ListY,R). % partition X according to Y/=
 groupby(Pred,X,R).      % call(Pred,X,X0), and group X according to X0/=
@@ -133,7 +132,7 @@ X <- cmd([git,'show-ref','origin/master']) <> nth(1) <> limit(7), log <> takeWhi
 % lines starting with `$' represent user input:
 %%%%
 $ test <- =([a,b,c,d,e]).
-$ L <- (iota <-- $test <> length) <> reverse, $test <> swap(repeat) with L each.
+$ I <- (rot(fd_domain,1) <-- $test <> length) <> fd_dom, $test <> swap(repeat) with I each.
 [a]
 [b,b]
 [c,c,c]
