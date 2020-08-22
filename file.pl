@@ -35,13 +35,14 @@ find(P,N,D,Fs) :-
 	atom(D),
 	N > 0,
 	directory_files(D,T),
-	filter(P,T,F),
 	N0 is N-1,
 	maplist(prefix(D),T,T0),
+	maplist(prefix(D),F,F0),
+	filter(P,T,F0),
 	filter(directory,T0,Ds),
 	maplist(find(P,N0),Ds,Fs0),
 	flatten(Fs0,R),
-	append(F,R,Fs).
+	append(F0,R,Fs), sort(Fs).
 
 find(P,N,D) :- nonvar(D), find(P,N,D,F), maplist(puts,F),!.
 find(P,D,O) :- var(O), find(P,D,1,O).
