@@ -52,6 +52,8 @@ zipWith(_,[],[],[]).
 X @ Y :- puts <-- X @ Y.
 
 order(X,Y) :- Y <- swap(zip(_)) <-- keysort <-- zip(X) <-- fd_dom <-- length(X) <> rot(fd_domain,1).
+sortby(X,Y,Z) :- list(X), order(X,G), Z <- Y@G.
+sortby(P,X,Y) :- callable(P), maplist(P,X,X0), order(X0,G), Y <- X@G.
 
 group(X,Y):-S<-sort(X),M<-msort(X),length(S,A),repeat([],A,I),N<-order(X),group(S,M,N,I,Y).
 group([X|Xs],[X|Ys],[N|Ns],[I|Is],Zs) :- group([X|Xs],Ys,Ns,[[N|I]|Is],Zs).
