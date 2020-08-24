@@ -51,7 +51,7 @@ zipWith(_,[],[],[]).
 @(_,[],[]).
 X @ Y :- puts <-- X @ Y.
 
-order(X,Y) :- Y <- swap(zip(_)) <-- keysort <-- zip(X) <-- reverse <-- length(X) <> (#<).
+order(X,Y) :- Y <- swap(zip(_)) <-- keysort <-- zip(X) <-- fd_dom <-- length(X) <> (#>).
 
 group(X,Y):-S<-sort(X),M<-msort(X),length(S,A),repeat([],A,I),N<-order(X),group(S,M,N,I,Y).
 group([X|Xs],[X|Ys],[N|Ns],[I|Is],Zs) :- group([X|Xs],Ys,Ns,[[N|I]|Is],Zs).
