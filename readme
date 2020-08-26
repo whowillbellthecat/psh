@@ -112,10 +112,10 @@ Additional operators are defined for convenience:
 
 Examples:
 --
-log <> length.                                      % how many git commits have been made?
-fl (file).                                          % output the code in file.pl via portray_clause
-fl +(fl)/2 <> length.                               % how many clauses does fl/2 have as defined?
-find(endswith('.pdf')) <> filter(startswith('3')).  % find files starting with 3 and ending with '.pdf'
+log <> length.                              % how many git commits have been made?
+fl (file).                                  % output the code in file.pl via portray_clause
+fl +(fl)/2 <> length.                       % how many clauses does fl/2 have as defined?
+find(endswith('.pdf')) &= startswith('3').  % find files starting with 3 and ending with '.pdf'
 
 % read a list of files starting with '3' and ending with '.pdf' into a variable, edit its contents with vi,
 % and then assign the edited result to the global variable test (read back in as a list via read/2).
@@ -131,10 +131,23 @@ X <- cmd([git,'show-ref','origin/master']) <> nth(1) <> limit(7), log <> takeWhi
 % example session demonstrating the use of some of the operators;
 % lines starting with `$' represent user input:
 %%%%
-$ test <- =([a,b,c,d,e]).
+$ test <- =([a,b,c,d,e]).   % repeat each element n times where n is the 1-origin index of the element
 $ I <- (rot(fd_domain,1) <-- $test <> length) <> fd_dom, $test <> swap(repeat) with I each.
 [a]
 [b,b]
 [c,c,c]
 [d,d,d,d]
 [e,e,e,e,e]
+$ t <- =([[a,b,c],[d,e],[f,g,h],[d,e],[i,j,k,l],[m,n],[o]]).  % sort list of lists by frequency of list lengths
+$ (sortby(length) <-- $t <> groupby(length)) <> fold(append). % n.b. groupby/sortby are not stable
+[o]
+[i,j,k,l]
+[a,b,c]
+[f,g,h]
+[d,e]
+[d,e]
+[m,n]
+
+--
+The lists by length frequency problem is taken from 'Ninety-Nine Prolog Problems', see:
+    https://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/
