@@ -109,17 +109,19 @@ Additional operators are defined for convenience:
 	p <> q each        % each modifies q(X,Y) to act instead as maplist(q,X,Y)
 	p <> q with l each % if l is a list of items l0,..,ln, `with' generates a list of closures
                            % Q = q(l0),..,q(ln) which `each' modifies to act as maplist(call,Q,X,Y).
+	p && q             % &&/3 calls both p and q on the third argument, &&/2 just calls p and q.
 
 Examples:
 --
 log <> length.                              % how many git commits have been made?
 fl (file).                                  % output the code in file.pl via portray_clause
 fl +(fl)/2 <> length.                       % how many clauses does fl/2 have as defined?
-find(endswith('.pdf')) &= startswith('3').  % find files starting with 3 and ending with '.pdf'
+find(startswith('3')) &= endswith('.pdf').  % find files starting with 3 and ending with '.pdf'
+find(startswith('3') && endswith('.pdf')).  % another way of expressing the same
 
 % read a list of files starting with '3' and ending with '.pdf' into a variable, edit its contents with vi,
 % and then assign the edited result to the global variable test (read back in as a list via read/2).
-test <- ivi <-- find(endswith('.pdf')) &= startswith('3').
+test <- ivi <-- find(startswith('3')) &= startswith('.pdf').
 
 % output list of filenames that would be captured by the regex `(.*).pdf$'
 find(drop(rot(atom_concat,'.pdf'))) <> maplist(rot(atom_concat,'.pdf')).
