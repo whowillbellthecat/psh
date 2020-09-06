@@ -15,6 +15,8 @@ gets(S,M) :-
 	; ([C]="\r"->gets(S,M))
 	; gets(S,T),(T= -1->M=[C];M=[C|T])).
 
+gets(M) :- gets(user_input,M).
+
 slurp(S,M) :- gets(S,L), (L= -1->M=[];M=[L|Ls],slurp(S,Ls)), !.
 readall(S,M) :- read(S,L), (L= end_of_file->M=[];M=[L|Ls],readall(S,Ls)), !.
 
