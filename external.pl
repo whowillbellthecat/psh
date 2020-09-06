@@ -42,5 +42,6 @@ log(D) :- nonvar(D), atom_concat('--git-dir=',D,T), spawn(git,[T,'-P',log,'--one
 log(M) :- var(M),atom_join([git,'-P',log,'--oneline'],' ',C), popen(C,read,S), slurp(S,M),close(S).
 log :- spawn(git, ['-P',log, '--oneline']).
 
-less(M) :- popen(less,write,S),maplist(println(S),M),close(S).
+less(M) :- list(M),!,popen(less,write,S),maplist(println(S),M),close(S).
+less(M) :- atom(M),spawn(less,[M]).
 man(M) :- spawn(man,[M]).
