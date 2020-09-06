@@ -1,3 +1,7 @@
+:- op(500,yfx,&&).
+
+&&(P,Q,X) :- call(P,X), call(Q,X).
+P && Q :- call(P), call(Q).
 
 %match clause with predicate name, e.g. `filter(cf(pred/2), Domain, Matching)`
 cf(H/N,(H0:-_)) :- functor(H0,H,N), !.
