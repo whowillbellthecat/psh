@@ -10,6 +10,15 @@
 :- op(401, fx, fl).
 :- op(401, fx, where).
 
+:- op(400,fx,~/).
+
+~/(X,R) :- environ('HOME',H), atom_join([H,X],'/',R).
+~/X :- ~/X <> (=).
+
+/(X,Y,R) :- atom(X), !, atom_join([X,Y],'/',R).
+/(X,Y,R) :- callable(X), call(X,X0), /(X0,Y,R).
+X/Y :- X/Y <> (=).
+
 hidden_file_path(P) :- atom_concat('.',_,P).
 directory(D) :- file_property(D,type(directory)).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
