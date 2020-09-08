@@ -3,9 +3,9 @@
 :- include('io.pl').
 :- include('atom.pl').
 
-:- op(100, fx, ls).
-:- op(100, fx, lsd).
-:- op(100, fx, cd).
+:- op(401, fx, ls).
+:- op(401, fx, lsd).
+:- op(401, fx, cd).
 :- op(100, fx, pwd).
 :- op(401, fx, fl).
 :- op(401, fx, where).
@@ -19,20 +19,23 @@
 /(X,Y,R) :- callable(X), call(X,X0), /(X0,Y,R).
 X/Y :- X/Y <> (=).
 
+resolve_atom(X,X) :- atom(X), !.
+resolve_atom(X,Y) :- callable(X), call(X,Y), atom(Y).
+
 hidden_file_path(P) :- atom_concat('.',_,P).
 directory(D) :- file_property(D,type(directory)).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
 
-ls(D,F) :- directory_files(D,T), exclude(hidden_file_path,T,F).
+ls(D,F) :- resolve_atom(D,D0), directory_files(D0,T), exclude(hidden_file_path,T,F).
 ls O :- var(O), ls('.',O).
-ls D :- nonvar(D), ls(D,F), maplist(puts,F).
+ls D :- nonvar(D),ls(D,F), maplist(puts,F).
 (ls) :- ls '.'.
 
 lsd(D,F) :- ls(D,F0), filter(directory,F0,F).
 lsd D :- lsd(D,F), maplist(puts,F).
 (lsd) :- lsd '.'.
 
-cd X :- change_directory(X). (cd) :- cd '~'.
+cd X :- resolve_atom(X,Y), change_directory(Y). (cd) :- cd '~'.
 pwd X :- working_directory(X). (pwd) :- pwd X, puts(X).
 
 % todo : add unlimited depth
