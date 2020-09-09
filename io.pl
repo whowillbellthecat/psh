@@ -1,5 +1,5 @@
 
-:- op(100, fx, cat).
+:- op(401, fx, cat).
 
 puts(S,M) :- write(S,M), nl(S).
 puts(M) :- write(M), nl.
@@ -20,7 +20,7 @@ gets(M) :- gets(user_input,M).
 slurp(S,M) :- gets(S,L), (L= -1->M=[];M=[L|Ls],slurp(S,Ls)), !.
 readall(S,M) :- read(S,L), (L= end_of_file->M=[];M=[L|Ls],readall(S,Ls)), !.
 
-cat(F,L) :- open(F,read,S), slurp(S,L).
+cat(F,L) :- resolve_atom(F,F0), open(F0,read,S), slurp(S,L).
 cat F :- nonvar(F), cat(F,L), maplist(println,L),!.
 cat F :- var(F), slurp(user_input, F).
 (cat) :- slurp(user_input,L), maplist(println,L).
