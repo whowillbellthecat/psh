@@ -23,6 +23,7 @@ resolve_atom(X,X) :- atom(X), !.
 resolve_atom(X,Y) :- callable(X), call(X,Y), atom(Y).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
+special_file_path('.'). special_file_path('..').
 directory(D) :- file_property(D,type(directory)).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
 
@@ -47,11 +48,12 @@ find(P,N,D,Fs) :-
 	atom(D),
 	N > 0,
 	directory_files(D,T),
+	exclude(special_file_path,T,T0),
 	N0 is N-1,
-	maplist(prefix(D),T,T0),
+	maplist(prefix(D),T0,T1),
 	filter(P,T,F),
 	maplist(prefix(D),F,F0),
-	filter(directory,T0,Ds),
+	filter(directory,T1,Ds),
 	maplist(find(P,N0),Ds,Fs0),
 	flatten(Fs0,R),
 	append(F0,R,Fs), sort(Fs).
