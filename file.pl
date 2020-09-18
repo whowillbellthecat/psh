@@ -12,15 +12,14 @@
 
 :- op(400,fx,~/).
 
+resolve_atom(X,X) :- atom(X), !.
+resolve_atom(X,Y) :- callable(X), call(X,Y), atom(Y).
+
 ~/(X,R) :- environ('HOME',H), atom_join([H,X],'/',R).
 ~/X :- ~/X <> (=).
 
-/(X,Y,R) :- atom(X), !, atom_join([X,Y],'/',R).
-/(X,Y,R) :- callable(X), call(X,X0), /(X0,Y,R).
+/(X,Y,R) :- resolve_atom(X,X0), resolve_atom(Y,Y0), atom_join([X0,Y0],'/',R).
 X/Y :- X/Y <> (=).
-
-resolve_atom(X,X) :- atom(X), !.
-resolve_atom(X,Y) :- callable(X), call(X,Y), atom(Y).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
 special_file_path('.'). special_file_path('..').
