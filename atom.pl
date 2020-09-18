@@ -1,4 +1,4 @@
-:- op(450,xfy,++).
+:- op(399,xfy,++).
 
 endswith(E,A) :- atom_concat(_,E,A).
 startswith(S,A) :- atom_concat(S,_,A).
