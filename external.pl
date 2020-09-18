@@ -11,9 +11,9 @@ cmd(X,Y) :- atom_join(X,' ',C), popen(C,read,S), slurp(S,Y), close(S).
 % I should consider folding ivi/edit/vi into the fewer predicates.
 vi(C,F) :- number(C),!,atom(F), write_to_atom(A,C), spawn(vi,['-c',A,F]).
 % are these two cases sufficiently distinct? Perhaps proper output redirection can obviate the latter?
-vi(F,M) :- resolve_atom(F,F0), var(M), cat(F0, A), vi(A,M).
+vi(F,M) :- atom_resolve(F,F0), var(M), cat(F0, A), vi(A,M).
 vi(D,M) :- \+ atom(D),temporary_file('',psh_,T),open(T,write,S),maplist(println(S),D),close(S),vi T,cat(T,M),unlink(T),!.
-vi F :- resolve_atom(F,F0), spawn(vi, [F0]).
+vi F :- atom_resolve(F,F0), spawn(vi, [F0]).
 (vi) :- spawn(vi, []).
 
 ivi(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),D),close(S),vi T, open(T,read,S0),
@@ -44,5 +44,5 @@ log(M) :- var(M),atom_join([git,'-P',log,'--oneline'],' ',C), popen(C,read,S), s
 log :- spawn(git, ['-P',log, '--oneline']).
 
 less(M) :- list(M),!,popen(less,write,S),maplist(println(S),M),close(S).
-less(M) :- resolve_atom(M,M0),spawn(less,[M0]).
+less(M) :- atom_resolve(M,M0),spawn(less,[M0]).
 man(M) :- spawn(man,[M]).
