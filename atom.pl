@@ -6,7 +6,5 @@ startswith(S,A) :- atom_concat(S,_,A).
 atom_resolve(X,X) :- atom(X), !.
 atom_resolve(X,Y) :- callable(X), call(X,Y), atom(Y).
 
-++(X,Y,R) :- atom(X), atom(Y), atom_concat(X,Y,R).
-++(X,Y,R) :- callable(X), call(X,X0), ++(X0,Y,R).
-++(X,Y,R) :- callable(Y), call(Y,Y0), ++(X,Y0,R).
+++(X,Y,R) :- atom_resolve(X,X0), atom_resolve(Y,Y0), atom_concat(X0,Y0,R).
 X++Y :- X++Y <> (=).
