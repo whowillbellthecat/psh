@@ -12,9 +12,6 @@
 
 :- op(400,fx,~/).
 
-resolve_atom(X,X) :- atom(X), !.
-resolve_atom(X,Y) :- callable(X), call(X,Y), atom(Y).
-
 ~/(X,R) :- environ('HOME',H), atom_join([H,X],'/',R).
 ~/X :- ~/X <> (=).
 
