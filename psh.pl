@@ -17,6 +17,7 @@ load_pshrc :- file_exists('~/.pshrc'), consult('~/.pshrc').
 prompt(X,Y) :- repeat,print(X),read(Y),nonvar(Y),(Y=end_of_file->halt;true).
 
 start(X) :- prompt(X,Y),call(Y),start(X).
-start :- load_pshrc, start('$ ').
+start :- load_pshrc, !, start('$ ').
+start :- start('$ ').
 
 :- initialization(start).
