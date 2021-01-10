@@ -9,5 +9,5 @@ psh: *.pl
 clean:
 	rm psh
 
-install:
+install: psh
 	$(INSTALL) -csm 0755 psh "$(BIN)"
