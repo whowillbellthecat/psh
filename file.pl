@@ -63,10 +63,10 @@ find(O) :- var(O), find(atom,1,'.',O).
 find :- find(atom,1).
 
 %file listing, with output similar to listing/1.
-fl(X,M) :- atom(X), \+ endswith('.pl',X), atom_concat(X, '.pl', F),open(F,read,S), readall(S,M).
-fl(F,M) :- atom(F), endswith('.pl',F),open(F,read,S), readall(S,M).
+fl(X,M) :- atom_resolve(X,X0), \+ endswith('.pl',X0), atom_concat(X0, '.pl', F),open(F,read,S), readall(S,M).
+fl(F,M) :- atom_resolve(F,F0), endswith('.pl',F0),open(F0,read,S), readall(S,M).
 fl(+X/N,M) :- M <-- where X/N <> via(X/N).
-fl X :- nonvar(X), fl(X,M), maplist(portray_clause,M),!.
+fl X :- nonvar(X), !, fl(X,M), maplist(portray_clause,M).
 fl X :- var(X), find(endswith('.pl'),X).
 (fl) :- fl(X), maplist(puts,X).
 
