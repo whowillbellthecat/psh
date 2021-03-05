@@ -12,7 +12,10 @@ X via F :- maplist(portray_clause) <-- X via F.
 edit T :- atom(T), atom_concat(T,'.pl',F), vi F.
 edit(+P/N) :- atom(P), where(P/N, F), whichline(P/N,L), vi(L,F).
 
-load_pshrc :- file_exists('~/.pshrc'), consult('~/.pshrc').
+config(pshrc,~/'.pshrc').
+
+edit_pshrc :- T <- config(pshrc) <> atom_resolve, vi T, consult(T).
+load_pshrc :- T <- config(pshrc) <> atom_resolve, file_exists(T), consult(T).
 
 prompt(X,Y) :- repeat,print(X),read(Y),nonvar(Y),(Y=end_of_file->halt;true).
 
