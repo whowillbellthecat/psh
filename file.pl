@@ -16,7 +16,7 @@
 ~/(X,R) :- environ('HOME',H), atom_join([H,X],'/',R).
 ~/X :- ~/X <> (=).
 
-//(X,R) :- atom_concat('/', X, R).
+//(X,R) :- atom_resolve(X, X0),  atom_concat('/', X0, R).
 //X :- //X <> (=).
 
 /(X,Y,R) :- atom_resolve(X,X0), atom_resolve(Y,Y0), atom_join([X0,Y0],'/',R).
