@@ -44,9 +44,7 @@ psh attempts (probably poorly) to define predicates so that if p/n for some
 n outputs to the terminal, then p/(n+1) 'outputs' to the last variable.
 
 Many routines, such as cd/pwd/vi/file are set as unary operators and need to
-be surrounded in parenthesis for those atoms to be used. (I may or may not
-change this at some point, I'm not sure yet how I feel about the relative convenience
-it offers). Notable routines include:
+be surrounded in parenthesis for them to be used as atoms. Notable routines include:
 
 vi filename.       % edit filename in vi
 ivi(data,O)        % edit data as list of prolog clauses in vi then read/2 into O.
@@ -110,6 +108,20 @@ Additional operators are defined for convenience:
 	p <> q with l each % if l is a list of items l0,..,ln, `with' generates a list of closures
                            % Q = q(l0),..,q(ln) which `each' modifies to act as maplist(call,Q,X,Y).
 	p && q             % &&/3 calls both p and q on the third argument, &&/2 just calls p and q.
+
+Psh will also 'resolve' predicates to atoms in some cases. This faculty supports inputing path expressions
+with fewer quotes, but also permits more general expressions as inputs predicates which support it.  The following
+conventions are used:
+	A predicate, atom_resolve(X,Y) is defined which will unify X with Y iff X is an atom, or call(X,Y) otherwise.
+
+	Operators such as (//), (~/), (/), (dot), (++) are defined to build up path expressions. These use atom_resolve
+	so that they can be nested. An expression such as:
+		//home/me/file dot pdf
+	will reduce to the atom '/home/me/file.pdf'.
+
+	Some psh 'routines', such as cd, ls, etc. also use atom_resolve so that path expressions can be reduced. Thus:
+		cd ~/src/psh.
+	will work as expected.
 
 Examples:
 --
