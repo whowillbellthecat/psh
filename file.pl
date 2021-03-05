@@ -11,9 +11,13 @@
 :- op(401, fx, where).
 
 :- op(400,fx,~/).
+:- op(400, fx, //).
 
 ~/(X,R) :- environ('HOME',H), atom_join([H,X],'/',R).
 ~/X :- ~/X <> (=).
+
+//(X,R) :- atom_concat('/', X, R).
+//X :- //X <> (=).
 
 /(X,Y,R) :- atom_resolve(X,X0), atom_resolve(Y,Y0), atom_join([X0,Y0],'/',R).
 X/Y :- X/Y <> (=).
