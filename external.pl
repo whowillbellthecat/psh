@@ -7,10 +7,7 @@
 
 cmd(X,Y) :- atom_join(X,' ',C), popen(C,read,S), slurp(S,Y), close(S).
 
-% is it possible to always detect when I want to interpret first arg as codes vs filename vs prolog terms?
-% I should consider folding ivi/edit/vi into the fewer predicates.
 vi(C,F) :- number(C),!,atom(F), write_to_atom(A,C), spawn(vi,['-c',A,F]).
-% are these two cases sufficiently distinct? Perhaps proper output redirection can obviate the latter?
 vi(D,M) :- list(D), temporary_file('',psh_,T),open(T,write,S),maplist(println(S),D),close(S),vi T,cat(T,M),unlink(T),!.
 vi(F,M) :- atom_resolve(F,F0), var(M), cat(F0, A), vi(A,M).
 vi F :- atom_resolve(F,F0), spawn(vi, [F0]).
@@ -19,7 +16,6 @@ vi F :- atom_resolve(F,F0), spawn(vi, [F0]).
 ivi(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),D),close(S),vi T, open(T,read,S0),
 	readall(S0,M),close(S0),unlink(T),!.
 
-%is using an atom as the response appropriate here?
 file(X,M) :- atom_resolve(X,X0), atom_concat('file ',X0,C), popen(C,read,S), gets(S,M0), close(S),atom_codes(M,M0).
 file(X) :- atom_resolve(X,X0), spawn(file, [X0]).
 
