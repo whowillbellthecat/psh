@@ -8,13 +8,7 @@
 
 cmd(X,Y) :- atom_join(X,' ',C), popen(C,read,S), slurp(S,Y), close(S).
 
-vi(C,F) :- number(C),!,atom(F), write_to_atom(A,C), spawn(vi,['-c',A,F]).
-vi(D,M) :- list(D), temporary_file('',psh_,T),open(T,write,S),maplist(println(S),D),close(S),vi T,cat(T,M),unlink(T),!.
-vi(F,M) :- atom_resolve(F,F0), var(M), cat(F0, A), vi(A,M).
-vi F :- atom_resolve(F,F0), spawn(vi, [F0]).
-(vi) :- spawn(vi, []).
-
-ivi(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),D),close(S),vi T, open(T,read,S0),
+ied(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),D),close(S),ed T, open(T,read,S0),
 	readall(S0,M),close(S0),unlink(T),!.
 
 ed(C,F) :- number(C), !, atom(F), write_to_atom(A,C), ed_(A,F).
