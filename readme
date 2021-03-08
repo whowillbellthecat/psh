@@ -6,7 +6,7 @@ to exit, etc.
 
 psh can be built by running `make` (with any posix make). gplc, the gprolog
 compiler, is the only build dependency. Some psh commands assume other runtime
-dependencies, but these are mostly obvious (e.g, vi/2 assumes `vi` is installed).
+dependencies, (e.g., less/1 assumes less is installed).
 
 psh uses op/3 to define operators for its syntax (and uses call/1 on inputs).
 Unlike the prolog top_level, psh does not show variable bindings or prompt for alternate solutions.
@@ -43,16 +43,18 @@ Currently substition semantics for e.g., global variables are not supported.
 psh attempts (probably poorly) to define predicates so that if p/n for some
 n outputs to the terminal, then p/(n+1) 'outputs' to the last variable.
 
-Many routines, such as cd/pwd/vi/file are set as unary operators and need to
+Many routines, such as cd/pwd/ed/file are set as unary operators and need to
 be surrounded in parenthesis for them to be used as atoms. Notable routines include:
 
-vi filename.       % edit filename in vi
-ivi(data,O)        % edit data as list of prolog clauses in vi then read/2 into O.
+ed filename.       % edit filename in EDITOR (default: vi)
+ied(data,O)        % edit data as list of prolog clauses in EDITOR then read/2 into O.
 fl.                % list files ending in .pl
 fl +f/n.           % display code from the source file for functor f with arity n
 fl filename.       % show the source of filename.pl using portray_clause
-edit filename.     % edit filename.pl in vi
-edit +f/n.         % edit the source file for functor f with arity n in vi
+edit filename.     % edit filename.pl in EDITOR
+edit +f/n.         % edit the source file for functor f with arity n in EDITOR
+	           %    ( for editors other than vi, add config(editor_line_flag,FLAG) to pshrc to support jumping to the
+                   %      the line number a predicate is defined on).
 cd dir.            % change directory to dir
 pwd.               % working directory
 ls.                % list files not starting with '.'
@@ -131,9 +133,9 @@ fl +(fl)/2 <> length.                       % how many clauses does fl/2 have as
 find(startswith('3')) &= endswith('.pdf').  % find files starting with 3 and ending with '.pdf'
 find(startswith('3') && endswith('.pdf')).  % another way of expressing the same
 
-% read a list of files starting with '3' and ending with '.pdf' into a variable, edit its contents with vi,
+% read a list of files starting with '3' and ending with '.pdf' into a variable, edit its contents with editor,
 % and then assign the edited result to the global variable test (read back in as a list via read/2).
-test <- ivi <-- find(startswith('3')) &= startswith('.pdf').
+test <- ied <-- find(startswith('3')) &= startswith('.pdf').
 
 % output list of filenames that would be captured by the regex `(.*).pdf$'
 find(drop(rot(atom_concat,'.pdf'))) <> maplist(rot(atom_concat,'.pdf')).
