@@ -1,6 +1,6 @@
 :- op(401, fx, vi).
 :- op(100, fx, make).
-:- op(100, fx, file).
+:- op(401, fx, file).
 :- op(100, fx, add).
 :- op(100, fx, diff).
 :- op(100, fx, man).
@@ -20,8 +20,8 @@ ivi(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),
 	readall(S0,M),close(S0),unlink(T),!.
 
 %is using an atom as the response appropriate here?
-file(X,M) :- atom_concat('file ',X,C), popen(C,read,S), gets(S,M0), close(S),atom_codes(M,M0).
-file(X) :- spawn(file, [X]).
+file(X,M) :- atom_resolve(X,X0), atom_concat('file ',X0,C), popen(C,read,S), gets(S,M0), close(S),atom_codes(M,M0).
+file(X) :- atom_resolve(X,X0), spawn(file, [X0]).
 
 make install :- spawn(doas, [make, install]), !.
 make T :- atom(T), spawn(make, [T]).
