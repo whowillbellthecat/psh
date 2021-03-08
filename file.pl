@@ -27,14 +27,28 @@ special_file_path('.'). special_file_path('..').
 directory(D) :- file_property(D,type(directory)).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
 
+help((ls)/2, 'unify R with a list of atoms containing the names of files in the directory X').
+help((ls)/1, 'unify R with a list of atoms containing the names of files in the current directory').
+help((ls)/1, 'output files in the directory X').
+help((ls)/0, 'output files in the current directory').
+
 ls(D,F) :- atom_resolve(D,D0), directory_files(D0,T), exclude(hidden_file_path,T,F).
 ls O :- var(O), ls('.',O).
 ls D :- nonvar(D),ls(D,F), maplist(puts,F).
 (ls) :- ls '.'.
 
+help((lsd)/2, 'unify R with a list of atoms containing names of directories in the directory X').
+help((lsd)/1, 'unify R with a list of atoms containing names of directories in the current directory').
+help((lsd)/0, 'output directories in the current directory').
+
 lsd(D,F) :- ls(D,F0), filter(directory,F0,F).
 lsd D :- lsd(D,F), maplist(puts,F).
 (lsd) :- lsd '.'.
+
+help((cd)/0, 'change the current working directory to $HOME').
+help((cd)/1, 'change the current working directory to X').
+help((pwd)/0, 'print the current working directory').
+help((pwd)/1, 'unify X with the current working directory').
 
 cd X :- atom_resolve(X,Y), change_directory(Y). (cd) :- cd '~'.
 pwd X :- working_directory(X). (pwd) :- pwd X, puts(X).
