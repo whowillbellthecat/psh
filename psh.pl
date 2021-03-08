@@ -11,16 +11,16 @@
 via(X,F,R) :- R <-- fl F <> filter(cf(X)).
 X via F :- maplist(portray_clause) <-- X via F.
 
-help((edit)/1, 'if X = +F/N, edit the containing file for functor F with arity N in vi').
-help((edit)/1, 'if atom(X), append \'.pl\' and open in vi').
+help((edit)/1, 'if X = +F/N, edit the containing file for functor F with arity N in editor').
+help((edit)/1, 'if atom(X), append \'.pl\' and open in editor').
 
-edit T :- atom(T), atom_concat(T,'.pl',F), vi F.
-edit(+P/N) :- atom(P), where(P/N, F), whichline(P/N,L), vi(L,F).
+edit T :- atom(T), atom_concat(T,'.pl',F), ed F.
+edit(+P/N) :- atom(P), where(P/N, F), whichline(P/N,L), ed(L,F).
 
-help(edit_pshrc/0, 'open pshrc in vi, then consult after editing').
+help(edit_pshrc/0, 'open pshrc in editor, then consult after editing').
 help(load_pshrc/0, 'reconsult pshrc').
 
-edit_pshrc :- T <- config(pshrc) <> atom_resolve, vi T, consult(T).
+edit_pshrc :- T <- config(pshrc) <> atom_resolve, ed T, consult(T).
 load_pshrc :- T <- config(pshrc) <> atom_resolve, file_exists(T), consult(T).
 
 prompt(X,Y) :- repeat,print(X),read(Y),nonvar(Y),(Y=end_of_file->halt;true).

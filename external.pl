@@ -1,4 +1,5 @@
 :- op(401, fx, vi).
+:- op(401, fx, ed).
 :- op(100, fx, make).
 :- op(401, fx, file).
 :- op(100, fx, add).
@@ -15,6 +16,11 @@ vi F :- atom_resolve(F,F0), spawn(vi, [F0]).
 
 ivi(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),D),close(S),vi T, open(T,read,S0),
 	readall(S0,M),close(S0),unlink(T),!.
+
+ed(D,M) :- list(D), !, temporary_file('',psh_,T),open(T,write,S),maplist(println(S),D),close(S),ed T,cat(T,M),unlink(T).
+ed(F,M) :- atom_resolve(F,F0), var(M), cat(F0, A), ed(A,M).
+ed F :- atom_resolve(F,F0), config(editor,E), spawn(E, [F0]).
+(ed) :- config(editor, E), spawn(E, []).
 
 file(X,M) :- atom_resolve(X,X0), atom_concat('file ',X0,C), popen(C,read,S), gets(S,M0), close(S),atom_codes(M,M0).
 file(X) :- atom_resolve(X,X0), spawn(file, [X0]).
