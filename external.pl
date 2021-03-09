@@ -23,7 +23,7 @@ ed_(_,F) :- ed F.
 file(X,M) :- atom_resolve(X,X0), atom_concat('file ',X0,C), popen(C,read,S), gets(S,M0), close(S),atom_codes(M,M0).
 file(X) :- atom_resolve(X,X0), spawn(file, [X0]).
 
-make install :- spawn(doas, [make, install]), !.
+make install :- !, config(sudo_cmd, S), spawn(S, [make, install]).
 make T :- atom(T), spawn(make, [T]).
 (make) :- spawn(make, []).
 
