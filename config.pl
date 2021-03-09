@@ -11,3 +11,6 @@ known_editor_line_flag(vi, '-c').
 config(editor_line_flag, X) :- config(editor,E), !, known_editor_line_flag(E, X).
 
 config(pshrc,~/'.pshrc').
+
+config(X) :- config(X,Y), write(Y), nl.
+config :- forall(config(X,Y), (write_to_atom(A,Y), format('~24a ~a~n', [X,A]))).
