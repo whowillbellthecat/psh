@@ -9,5 +9,7 @@ help :-
 	nl, nl,
 	write('For help with Command, run help(Command).'), nl.
 
-help(C) :- atom(C), findall(N-H, help(C/N,H), H), keysort(H,H0), forall(member(N-M, H0), (puts(C/N), write('\t'), puts(M))).
-help(C/N) :- help(C/N, H), puts(C/N), write('\t'), puts(H).
+help(C) :- atom(C), findall(N-H, help(C/N,H), H), keysort(H,H0), forall(member(N-M, H0), put_help_msg(C,N,M)).
+help(C/N) :- help(C/N, H), put_help_msg(C,N,H).
+
+put_help_msg(C,N,M) :- puts(C/N), write('\t'), puts(M).
