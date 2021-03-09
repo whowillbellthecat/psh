@@ -79,7 +79,7 @@ println(codes).    % print codes to stdout
 puts(S,msg).       % put msg to stream S (in internal encoding)
 puts(msg).         % put msg to stdout (in internal encoding)
 make.              % run `make`
-make install.      % run `doas make install` (I should probably have this check for SUDO= or something)
+make install.      % run `doas make install` (to use a program other than doas set SUDO)
 make target.       % run `make target`
 log.               % git -P log --oneline
 add filename.      % git add filename
