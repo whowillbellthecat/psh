@@ -29,4 +29,19 @@ start(X) :- prompt(X,Y),call(Y),start(X).
 start :- load_pshrc, !, start('$ ').
 start :- start('$ ').
 
-:- initialization(start).
+main :- argument_list(X), handle_arguments(X).
+
+handle_arguments(['-r']) :- !, start.
+handle_arguments(['-c',C]) :- !, ( call(C) ; true ), halt.
+handle_arguments([]) :- !, ( readline_hack ; true ), start.
+handle_arguments([X]) :- !, consult(X), start.
+handle_arguments(_) :- write('Error: unknown mode of operation'), nl, halt.
+
+% This is an ugly hack to provide a way to ensure rlwrap is used even when psh is
+% executing directly (e.g., as a login shell). I use rlwrap because it supports vi-like
+% keybindings, and the get-key predicates assume LINEDIT (which I don't want to use).
+% I should eventually^tm use the C FFI to implement the primitives I need, but for now
+% this works. Note that this will only take effect if PSH_RLWRAP is set.
+readline_hack :- environ('LINEDIT', no), environ('PSH_RLWRAP',_), spawn(rlwrap, [psh,'-r']), halt.
+
+:- initialization(main).
