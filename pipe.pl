@@ -24,3 +24,5 @@ V <= (P<>Q<>R) :- V <= (P<>[Q|[R]]).
 
 P <> Q :- (X <-- P <> Q), (list(X)->maplist(puts,X);puts(X)), !.
 <>(P,Q,R) :- R <-- P <> Q.
+
+<>(P,Q,I,R) :- R <-- =(I) <> P <> Q.
