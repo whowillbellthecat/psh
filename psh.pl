@@ -4,6 +4,7 @@
 :- include('external.pl').
 :- include('misc.pl').
 :- include('config.pl').
+:- include('tty.pl').
 
 :- op(799, xfx, via).
 :- op(401, fx, edit).

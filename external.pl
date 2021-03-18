@@ -27,8 +27,6 @@ make T :- T == install, !, config(sudo_cmd, S), spawn(S, [make, install]).
 make T :- atom(T), spawn(make, [T]).
 (make) :- spawn(make, []).
 
-clear :- spawn(clear,[]).
-
 commit :- spawn(git, [commit]).
 status :- spawn(git, [status,'-s']).
 add [X|Xs] :- spawn(git, [add,X|Xs]).
