@@ -32,7 +32,7 @@ help((ls)/1, 'output files in the directory X').
 help((ls)/0, 'output files in the current directory').
 
 ls(D,F) :- atom_resolve(D,D0), directory_files(D0,T), exclude(hidden_file_path,T,F).
-ls O :- var(O), ls('.',O).
+ls O :- var(O), !, ls('.',O).
 ls D :- nonvar(D),ls(D,F), maplist(puts,F).
 (ls) :- ls '.'.
 

@@ -7,7 +7,7 @@
 $X :- puts <-- g_read(X).
 $(X,Y) :- g_read(X,Y).
 
-X <- P :- var(X), call(P,X).
+X <- P :- var(X), !, call(P,X).
 X <- P :- atom(X), call(P,Y), g_assign(X,Y).
 
 Z <-- P :- \+ functor(P,(<>),_), var(Z), call(P,Z).

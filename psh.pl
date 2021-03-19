@@ -26,14 +26,14 @@ load_pshrc :- T <- config(pshrc) <> atom_resolve, file_exists(T), consult(T).
 
 prompt(X,Y) :- repeat,print(X),read(Y),nonvar(Y),(Y=end_of_file->halt;true).
 
-start(X) :- prompt(X,Y),call(Y),start(X).
+start(X) :- prompt(X,Y),once(Y), false.
 start :- load_pshrc, !, start('$ ').
 start :- start('$ ').
 
 main :- argument_list(X), handle_arguments(X).
 
 handle_arguments(['-r']) :- !, start.
-handle_arguments(['-c',C]) :- !, ( call(C) ; true ), halt.
+handle_arguments(['-c',C]) :- !, ( once(C) ; true ), halt.
 handle_arguments([]) :- !, ( readline_hack ; true ), start.
 handle_arguments([X]) :- !, consult(X), start.
 handle_arguments(_) :- write('Error: unknown mode of operation'), nl, halt.
