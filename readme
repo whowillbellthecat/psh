@@ -58,7 +58,6 @@ edit +f/n.         % edit the source file for functor f with arity n in EDITOR
 cd dir.            % change directory to dir
 pwd.               % working directory
 ls.                % list files not starting with '.'
-lsd.               % list directories
 less(list).        % display list of codes in `less`
 find(p).           % find files 1 level deep satisfying predicate p/1
 find(p,depth).     % find files upto depth satisfying predicate p/1
