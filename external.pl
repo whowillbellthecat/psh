@@ -8,6 +8,18 @@
 
 cmd(X,Y) :- atom_join(X,' ',C), popen(C,read,S), slurp(S,Y), close(S).
 
+cmd(Comm,Args,Output) :- create_pipe(R,W), spawn(Comm,Args,'$stream'(0),W,'$stream'(2)), close(W), slurp(R, Output), close(R).
+
+spawn(Comm, Args, In, Out, Err) :-
+	fork_prolog(N),
+	(  N == 0 -> ( spawn_(Comm, Args, In, Out, Err), halt ; halt ) ; true ).
+
+spawn_(Comm,Args,'$stream'(In),'$stream'(Out),'$stream'(Err)) :-
+	force_set(0, In),
+	force_set(1, Out),
+	force_set(2, Err),
+	spawn(Comm, Args).
+
 ied(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),D),close(S),ed T, open(T,read,S0),
 	readall(S0,M),close(S0),unlink(T),!.
 
