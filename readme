@@ -1,15 +1,37 @@
-psh is a toy shell/personal experiment. I haven't quite found the correct
-principles in terms of which it should be constructed, so all the code that
-is present currently might get thrown right out; there is also quite a bit
-of missing functionality - job control isn't implemented, crtl-C causes psh
-to exit, etc.
+psh is an attempt to extend/replace the prolog top_level until it suffices to
+function as a system shell suitable for interactive use.
+
+psh differs from the prolog top_level in that it doesn't show alternate
+solutions or variable bindings. Additionally, psh defines operators to
+limit the number of explicit variables used. The prolog top_level can
+always be started via top_level/0 though, and is never far away.
+
+Note that built psh binaries are affected by GNU Prolog's licensing terms (GPL/LGPL).
+
+At present, psh is incomplete and has no releases or stable interfaces.
+Existing code may be thrown out, or rewritten without warning.
+
+psh has major limitations at present including:
+	no support for constructing streaming pipelines between external proceses
+	nothing resembling fd redirection
+	exceptions are printed instead of error messages
+	documentation is sparse and lacks reasonable conventions
+	no job control
+	crtl+C isn't caught and causes psh to exit
+	no way to trap signals
+	editline support is a mess ( gprolog provides its own mechanism for this, which completes
+		atoms, but doesn't support vi-like keybindings or completing e.g., file names;
+		additionally if LINEDIT is set to 'no' and PSH_RLWRAP is set, then psh will run
+		itself under rlwrap ).
+
+As of March 2021, I use psh as my login shell.
 
 psh can be built by running `make` (with any posix make). gplc, the gprolog
 compiler, is the only build dependency. Some psh commands assume other runtime
 dependencies, (e.g., less/1 assumes less is installed).
 
-psh uses op/3 to define operators for its syntax (and uses call/1 on inputs).
-Unlike the prolog top_level, psh does not show variable bindings or prompt for alternate solutions.
+psh uses op/3 to define operators for its syntax (and uses read/1 and call/1 on inputs).
+Thus every statement typed into psh is also valid prolog (and vice versa).
 
 psh pipes have the following syntax (note these are predicate compositions not pipes
 between external processes):
@@ -23,13 +45,13 @@ between external processes):
 	X <-- p <> q.  %% call(p,Y), call(q,Y,X).
 	r <-- p <> q.  %% call(p,Y), call(q,Y,X), call(r,X).
 
-Note that one of the limitations of the current syntax is that routines
-which require variables to be instatiated early may throw errors,
+Note that one of the limitations of the current implementation is that routines
+which require variables to be instatiated early may throw errors when using <>,
 a routine used such as r in (r <-- p <> q) will however have its dependencies
 appropriately ordered; for example, if r and s are routines which require
 instatiated variables, and p and q which do not, then the following will avoid
 exceptions:
-	s <-- r <-- p <> q.
+	s <-- r <-- p <> q.  % n.b. this calls s/1 not s/2
 
 The precedence for these operators is set to be lower than comma so that
 they can be used such as in (X <- p, Y <- q(X)).
@@ -38,13 +60,8 @@ Additionally a syntax somewhat similar to posix shell variables is supported:
 	$var       %% g_read(var,X),puts(X). (i.e, print global variable)
 	$var <> p. %% g_read(var,X),call(p,X).
 
-Currently substition semantics for e.g., global variables are not supported.
-
-psh attempts (probably poorly) to define predicates so that if p/n for some
-n outputs to the terminal, then p/(n+1) 'outputs' to the last variable.
-
 Many routines, such as cd/pwd/ed/file are set as unary operators and need to
-be surrounded in parenthesis for them to be used as atoms. Notable routines include:
+be surrounded in parenthesis for them to be used as atoms. Some notable routines include:
 
 ed filename.       % edit filename in EDITOR (default: vi)
 ied(data,O)        % edit data as list of prolog clauses in EDITOR then read/2 into O.
@@ -63,7 +80,6 @@ find(p).           % find files 1 level deep satisfying predicate p/1
 find(p,depth).     % find files upto depth satisfying predicate p/1
 find(p,depth,dir). % find files upto depth satisfying predicate p/1 in dir
 filter(p,dom,sat). % sat is a list containing solutions of p constrained to domain dom
-                   %  bug : some predicates can fail early and only return the first match. I should look into this.
 endswith(str,x).   % x ends with str
 startswith(str,x). % x starts with str
 limit(list).       % output first 10 items in list
@@ -87,7 +103,7 @@ commit             % git commit
 diff.              % git -P diff
 diff whatever.     % git -P diff whatever
 file somefile.     % run `file somefile`
-clear.             % you have three guesses
+clear.             % clear screen
 
 rot(P,X,Y,Z).       % call(P,Z,X,Y). n.b. this is backwards w.r.t. forth
 swap(P,X,Y).        % call(P,Y,X).
