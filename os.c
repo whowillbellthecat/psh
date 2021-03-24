@@ -12,6 +12,8 @@ PlBool tz(PlLong *t) {
 
 PlBool force_set(PlLong ofd, PlLong nfd) {
         int i, c;
+	if (ofd == nfd)
+		return PL_TRUE;
         c = close(ofd);
         i = dup(nfd);
         if (i != ofd) {
