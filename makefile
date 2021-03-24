@@ -2,9 +2,10 @@
 PREFIX=/usr/local
 BIN=$(DESTDIR)$(PREFIX)/bin
 INSTALL=install
+CC=gcc
 
-psh: *.pl
-	gplc psh.pl
+psh: *.pl os.c
+	gplc --c-compiler "$(CC)" psh.pl os.c
 
 clean:
 	rm psh

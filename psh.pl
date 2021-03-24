@@ -1,3 +1,4 @@
+:- include('os.pl').
 :- include('help.pl').
 :- include('comb.pl').
 :- include('file.pl').
