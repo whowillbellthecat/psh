@@ -42,7 +42,7 @@ ed F :- atom_resolve(F,F0), config(editor,E), spawn(E, [F0]).
 ed_(A,F) :- config(editor_line_flag,L), config(editor, E), spawn(E,[L,A,F]).
 ed_(_,F) :- ed F.
 
-file(X,M) :- atom_resolve(X,X0), atom_concat('file ',X0,C), popen(C,read,S), gets(S,M0), close(S),atom_codes(M,M0).
+file(X,M) :- atom_resolve(X,X0), cmd(file,[X0],M0), atom_codes(M,M0).
 file(X) :- atom_resolve(X,X0), spawn(file, [X0]).
 
 make T :- T == install, !, config(sudo_cmd, S), spawn(S, [make, install]).
@@ -58,9 +58,9 @@ diff X :- atom(X), spawn(git, ['-P',diff,X]).
 (diff) :- spawn(git, ['-P',diff]).
 push :- spawn(git, [push]).
 
-log(D,M) :- nonvar(D),atom_concat('--git-dir=',D,T),atom_join([git,T,'-P',log,'--oneline'],' ',C),popen(C,read,S),slurp(S,M),close(S).
+log(D,M) :- nonvar(D), atom_concat('--git-dir=',D,T), cmd(git, [T,'-P',log,'--oneline'], M).
 log(D) :- nonvar(D), atom_concat('--git-dir=',D,T), spawn(git,[T,'-P',log,'--oneline']).
-log(M) :- var(M),atom_join([git,'-P',log,'--oneline'],' ',C), popen(C,read,S), slurp(S,M),close(S).
+log(M) :- var(M),cmd(git,['-P',log,'--oneline'],M).
 log :- spawn(git, ['-P',log, '--oneline']).
 
 less(M) :- list(M),!,popen(less,write,S),maplist(println(S),M),close(S).
