@@ -6,7 +6,7 @@ solutions or variable bindings. Additionally, psh defines operators to
 limit the number of explicit variables used. The prolog top_level can
 always be started via top_level/0 though, and is never far away.
 
-Note that built psh binaries are affected by GNU Prolog's licensing terms (GPL/LGPL).
+Note that built psh binaries may be affected by GNU Prolog's licensing terms (GPL/LGPL).
 
 At present, psh is incomplete and has no releases or stable interfaces.
 Existing code may be thrown out, or rewritten without warning.
