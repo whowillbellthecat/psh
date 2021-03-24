@@ -6,8 +6,6 @@
 :- op(100, fx, diff).
 :- op(100, fx, man).
 
-cmd(X,Y) :- atom_join(X,' ',C), popen(C,read,S), slurp(S,Y), close(S).
-
 cmd(Comm,Args,Output) :- create_pipe(R,W), spawn(Comm,Args,'$stream'(0),W,'$stream'(2)), close(W), slurp(R, Output), close(R).
 
 spawn(Comm, Args, In, Out, Err) :-
