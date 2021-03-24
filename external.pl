@@ -6,11 +6,23 @@
 :- op(100, fx, diff).
 :- op(100, fx, man).
 
-cmd(Comm,Args,Output) :- create_pipe(R,W), spawn(Comm,Args,'$stream'(0),W,'$stream'(2)), close(W), slurp(R, Output), close(R).
+cmd(Comm,Args,Output) :- spawn(Comm,Args,InW,OutR,ErrR), close(InW), close(ErrR), slurp(OutR, Output), close(OutR).
+cmd(Comm,Args,Input,Output) :-
+	spawn(Comm,Args,InW,OutR,ErrR),
+	close(ErrR),
+        maplist(println(InW), Input),
+	close(InW),
+        slurp(OutR, Output),
+	close(OutR).
 
-spawn(Comm, Args, In, Out, Err) :-
+spawn(Comm, Args, InW, OutR, ErrR) :-
+	create_pipe(InR, InW), create_pipe(OutR,OutW), create_pipe(ErrR,ErrW),
 	fork_prolog(N),
-	(  N == 0 -> ( spawn_(Comm, Args, In, Out, Err), halt ; halt ) ; true ).
+	(   N == 0
+	-> ( close(InW), close(OutR), close(ErrR),
+	     spawn_(Comm, Args, InR, OutW, ErrW),
+	     halt ; halt )
+	;   close(InR), close(OutW), close(ErrW) ).
 
 spawn_(Comm,Args,'$stream'(In),'$stream'(Out),'$stream'(Err)) :-
 	force_set(0, In),
