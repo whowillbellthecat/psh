@@ -3,14 +3,15 @@
 :- include('list.pl').
 :- include('io.pl').
 
-:- op(401, fx, ls).
-:- op(401, fx, cd).
-:- op(100, fx, pwd).
-:- op(401, fx, fl).
-:- op(401, fx, where).
+:- op(402, fx, ls).
+:- op(402, fx, cd).
+:- op(102, fx, pwd).
+:- op(402, fx, fl).
+:- op(402, fx, where).
 
 :- op(400,fx,~/).
 :- op(400, fx, //).
+:- op(401, xfy, ://).
 
 ~/(X,R) :- environ('HOME',H), atom_resolve(X,X0), atom_join([H,X0],'/',R).
 ~/X :- ~/X <> (=).
@@ -20,6 +21,9 @@
 
 /(X,Y,R) :- atom_resolve(X,X0), atom_resolve(Y,Y0), atom_join([X0,Y0],'/',R).
 X/Y :- X/Y <> (=).
+
+://(X,Y,R) :- atom_resolve(X,X0), atom_resolve(Y,Y0), atom_join([X0,Y0],'://',R).
+X://Y :- X://Y <> (=).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
 special_file_path('.'). special_file_path('..').

@@ -8,7 +8,7 @@
 :- include('tty.pl').
 
 :- op(799, xfx, via).
-:- op(401, fx, edit).
+:- op(402, fx, edit).
 
 via(X,F,R) :- R <-- fl F <> filter(cf(X)).
 X via F :- maplist(portray_clause) <-- X via F.
