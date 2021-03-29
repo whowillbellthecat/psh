@@ -40,6 +40,7 @@ make_transform(F) :-
 make_transform :-
 	make_transform(shell),
 	make_transform((file)),
+	make_transform(psh),
 	halt.
 
 :- initialization(make_transform).
