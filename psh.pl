@@ -1,12 +1,12 @@
-:- include('op.pl').
-:- include('os.pl').
-:- include('help.pl').
-:- include('comb.pl').
+:- psh_include(op).
+:- psh_include(os).
+:- psh_include(help).
+:- psh_include(comb).
 :- psh_include((file)).
-:- include('external.pl').
-:- include('misc.pl').
-:- include('config.pl').
-:- include('tty.pl').
+:- psh_include(external).
+:- psh_include(misc).
+:- psh_include(config).
+:- psh_include(tty).
 :- psh_include(shell).
 
 via(X,F,R) :- R <-- fl F <> filter(cf(X)).
