@@ -6,13 +6,13 @@
 ~/(X), [R] => environ('HOME',H), atom_join([H,X],'/',R).
 ~/X :- ~/X <> (=).
 
-//(X,R) :- atom_resolve(X, X0),  atom_concat('/', X0, R).
+//(X), [R] => atom_concat('/', X, R).
 //X :- //X <> (=).
 
-/(X,Y,R) :- atom_resolve(X,X0), atom_resolve(Y,Y0), atom_join([X0,Y0],'/',R).
+/(X,Y), [R] => atom_join([X,Y],'/',R).
 X/Y :- X/Y <> (=).
 
-://(X,Y,R) :- atom_resolve(X,X0), atom_resolve(Y,Y0), atom_join([X0,Y0],'://',R).
+://(X,Y), [R] => atom_join([X,Y],'://',R).
 X://Y :- X://Y <> (=).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
@@ -25,7 +25,7 @@ help((ls)/1, 'unify R with a list of atoms containing the names of files in the 
 help((ls)/1, 'output files in the directory X').
 help((ls)/0, 'output files in the current directory').
 
-ls(D,F) :- atom_resolve(D,D0), directory_files(D0,T), exclude(hidden_file_path,T,F).
+ls(D), [F] => directory_files(D,T), exclude(hidden_file_path,T,F).
 ls O :- var(O), !, ls('.',O).
 ls D :- nonvar(D),ls(D,F), maplist(puts,F).
 (ls) :- ls '.'.
@@ -35,7 +35,7 @@ help((cd)/1, 'change the current working directory to X').
 help((pwd)/0, 'print the current working directory').
 help((pwd)/1, 'unify X with the current working directory').
 
-cd X :- atom_resolve(X,Y), change_directory(Y). (cd) :- cd '~'.
+cd X => change_directory(X). (cd) :- cd '~'.
 pwd X :- working_directory(X). (pwd) :- pwd X, puts(X).
 
 % todo : add unlimited depth
@@ -67,8 +67,8 @@ find :- find(atom,1).
 
 %file listing, with output similar to listing/1.
 fl(+X/N,M) :- !, M <-- where X/N <> via(X/N).
-fl(X,M) :- atom_resolve(X,X0), \+ endswith('.pl',X0), atom_concat(X0, '.pl', F),open(F,read,S), readall(S,M).
-fl(F,M) :- atom_resolve(F,F0), endswith('.pl',F0),open(F0,read,S), readall(S,M).
+fl(X), [M] => \+ endswith('.pl',X), atom_concat(X, '.pl', F),open(F,read,S), readall(S,M).
+fl(F), [M] => endswith('.pl',F),open(F,read,S), readall(S,M).
 fl X :- nonvar(X), !, fl(X,M), maplist(portray_clause,M).
 fl X :- var(X), find(endswith('.pl'),X).
 (fl) :- fl(X), maplist(puts,X).
