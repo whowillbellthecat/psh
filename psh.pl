@@ -1,3 +1,4 @@
+:- include('op.pl').
 :- include('os.pl').
 :- include('help.pl').
 :- include('comb.pl').
@@ -7,9 +8,6 @@
 :- include('config.pl').
 :- include('tty.pl').
 :- include('p_shell.pl').
-
-:- op(799, xfx, via).
-:- op(402, fx, edit).
 
 via(X,F,R) :- R <-- fl F <> filter(cf(X)).
 X via F :- maplist(portray_clause) <-- X via F.

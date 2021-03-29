@@ -1,6 +1,3 @@
-:- op(399,xfy,++).
-:- op(399,xfy,dot).
-
 help(endswith/2, 'true iff Y ends with X').
 help(startswith/2, 'true iff Y starts with X').
 

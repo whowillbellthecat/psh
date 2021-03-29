@@ -1,4 +1,5 @@
 :- op(1200,xfx,=>).
+:- include('op.pl').
 
 resolve_clauses([X|Xs],[Y|Ys],(atom_resolve(X,Y), R)/T) :- resolve_clauses(Xs,Ys,R/T).
 resolve_clauses([],[],T/T).

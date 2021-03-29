@@ -1,9 +1,3 @@
-:- op(951, xfx, <-).
-:- op(650, yfx, '<>').
-:- op(950, xfx, <=).
-:- op(950, xfy, <--).
-:- op(100, fx, $).
-
 $X :- puts <-- g_read(X).
 $(X,Y) :- g_read(X,Y).
 

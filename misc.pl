@@ -1,6 +1,3 @@
-:- op(500,yfx,&&).
-:- op(500,yfx,or).
-
 &&(P,Q,X) :- call(P,X), call(Q,X).
 P && Q :- call(P), call(Q).
 

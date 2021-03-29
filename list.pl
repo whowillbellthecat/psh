@@ -1,9 +1,3 @@
-:- op(649, yf, each).
-:- op(648, xfy, with).
-:- op(648, yfx, &=).
-:- op(620, yfx, fold).
-:- op(399, yfx, @).
-
 each(Y with X,Q,R) :- P <- Y with X, maplist(call,P,Q,R),!.
 each(P,Q,R) :- maplist(P,Q,R).
 each(P,Q) :- maplist(puts) <-- maplist(P,Q).

@@ -1,6 +1,3 @@
-
-:- op(401, fx, cat).
-
 puts(S,M) :- write(S,M), nl(S).
 puts(M) :- write(M), nl.
 

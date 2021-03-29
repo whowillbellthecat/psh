@@ -1,11 +1,3 @@
-:- op(402, fx, vi).
-:- op(402, fx, ed).
-:- op(100, fx, make).
-:- op(402, fx, file).
-:- op(100, fx, add).
-:- op(100, fx, diff).
-:- op(100, fx, man).
-
 cmd(Comm,Args,Output) :- spawn(Comm,Args,InW,OutR,ErrR), close(InW), close(ErrR), slurp(OutR, Output), close(OutR).
 cmd(Comm,Args,Input,Output) :-
 	spawn(Comm,Args,InW,OutR,ErrR),

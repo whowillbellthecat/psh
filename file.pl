@@ -3,16 +3,6 @@
 :- include('list.pl').
 :- include('io.pl').
 
-:- op(402, fx, ls).
-:- op(402, fx, cd).
-:- op(102, fx, pwd).
-:- op(402, fx, fl).
-:- op(402, fx, where).
-
-:- op(400,fx,~/).
-:- op(400, fx, //).
-:- op(401, xfy, ://).
-
 ~/(X,R) :- environ('HOME',H), atom_resolve(X,X0), atom_join([H,X0],'/',R).
 ~/X :- ~/X <> (=).
 
