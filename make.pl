@@ -30,8 +30,7 @@ readall(S,M) :- read(S,L), (L= end_of_file->M=[];M=[L|Ls],readall(S,Ls)), !.
 
 transform(X,R) :- apply_expand(expand_command_clause, X, X0), apply_expand(expand_psh_include, X0, R).
 
-make_transform(F) :-
-	prolog_file_name(F,InF),
+make_transform(InF) :-
 	atom_concat('p_',InF, OutF),
 	open(InF,read,ReadS),
 	readall(ReadS, Data),
@@ -42,9 +41,13 @@ make_transform(F) :-
 	close(WriteS).
 
 make_transform :-
-	make_transform(shell),
-	make_transform((file)),
-	make_transform(psh),
+	directory_files('.',T),
+	findall(E,
+		(  member(E, T),
+		   atom_concat(_,'.pl',E),
+		\+ atom_concat('p_',_,E)),
+	    Targets),
+	forall(member(E, Targets), make_transform(E)),
 	halt.
 
 :- initialization(make_transform).
