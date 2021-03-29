@@ -67,8 +67,7 @@ find :- find(atom,1).
 
 %file listing, with output similar to listing/1.
 fl(+X/N,M) :- !, M <-- where X/N <> via(X/N).
-fl(X), [M] => \+ endswith('.pl',X), atom_concat(X, '.pl', F),open(F,read,S), readall(S,M).
-fl(F), [M] => endswith('.pl',F),open(F,read,S), readall(S,M).
+fl(X), [M] => prolog_file_name(X,F), open(F, read, S), readall(S,M).
 fl X :- nonvar(X), !, fl(X,M), maplist(portray_clause,M).
 fl X :- var(X), find(endswith('.pl'),X).
 (fl) :- fl(X), maplist(puts,X).
