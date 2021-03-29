@@ -1,7 +1,7 @@
-:- include('pipe.pl').
-:- include('atom.pl').
-:- include('list.pl').
-:- include('io.pl').
+:- psh_include(pipe).
+:- psh_include(atom).
+:- psh_include(list).
+:- psh_include(io).
 
 ~/(X), [R] => environ('HOME',H), atom_join([H,X],'/',R).
 ~/X :- ~/X <> (=).
