@@ -4,6 +4,14 @@
 resolve_clauses([X|Xs],[Y|Ys],(atom_resolve(X,Y), R)/T) :- resolve_clauses(Xs,Ys,R/T).
 resolve_clauses([],[],T/T).
 
+expand_command_clause((Head => Body), (H0 :- B)) :-
+	Head = (P,Q), !,
+	list(Q),
+	expand_command_clause((P => Body), (H :- B)),
+	H =.. Xs,
+	append(Xs,Q,Ys),
+	H0 =.. Ys.
+
 expand_command_clause((Head => Body), (Head0 :- R)) :-
         Head =.. [F|Vars],
         length(Vars,N),
@@ -31,6 +39,7 @@ make_transform(F) :-
 
 make_transform :-
 	make_transform(shell),
+	make_transform((file)),
 	halt.
 
 :- initialization(make_transform).

@@ -2,7 +2,7 @@
 :- include('os.pl').
 :- include('help.pl').
 :- include('comb.pl').
-:- include('file.pl').
+:- include('p_file.pl').
 :- include('external.pl').
 :- include('misc.pl').
 :- include('config.pl').

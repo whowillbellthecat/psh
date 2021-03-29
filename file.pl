@@ -3,7 +3,7 @@
 :- include('list.pl').
 :- include('io.pl').
 
-~/(X,R) :- environ('HOME',H), atom_resolve(X,X0), atom_join([H,X0],'/',R).
+~/(X), [R] => environ('HOME',H), atom_join([H,X],'/',R).
 ~/X :- ~/X <> (=).
 
 //(X,R) :- atom_resolve(X, X0),  atom_concat('/', X0, R).
