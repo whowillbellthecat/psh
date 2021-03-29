@@ -2,12 +2,12 @@
 :- include('os.pl').
 :- include('help.pl').
 :- include('comb.pl').
-:- include('p_file.pl').
+:- psh_include((file)).
 :- include('external.pl').
 :- include('misc.pl').
 :- include('config.pl').
 :- include('tty.pl').
-:- include('p_shell.pl').
+:- psh_include(shell).
 
 via(X,F,R) :- R <-- fl F <> filter(cf(X)).
 X via F :- maplist(portray_clause) <-- X via F.
