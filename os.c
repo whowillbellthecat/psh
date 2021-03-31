@@ -1,4 +1,5 @@
 #include <sys/types.h>
+#include <dirent.h>
 #include <time.h>
 #include <unistd.h>
 #include <gprolog.h>
@@ -22,5 +23,28 @@ PlBool force_set(PlLong ofd, PlLong nfd) {
 	}
 	if (c)
 		return PL_FALSE;
+	return PL_TRUE;
+}
+
+PlBool dir_file(char *dir, PlLong *file) {
+	DIR *dirp, **cp;
+	struct dirent *dp;
+	cp = Pl_Get_Choice_Buffer(DIR **);
+	if (Pl_Get_Choice_Counter() == 0) {
+		if ((dirp = opendir(dir)) == NULL) {
+			Pl_No_More_Choice();
+			return PL_FALSE;
+		}
+		*cp = dirp;
+	} else
+		dirp = *cp;
+	
+	if ((dp = readdir(dirp)) == NULL) {
+		Pl_No_More_Choice();
+		closedir(dirp);
+		return PL_FALSE;
+	}
+
+	*file = Pl_Create_Atom(dp->d_name);
 	return PL_TRUE;
 }
