@@ -12,6 +12,7 @@ apply_expand(_, [], []).
 
 expand_command_clause((Head => Body), (H0 :- B)) :-
 	Head = (P,Q), !,
+	functor(P,_,_),
 	list(Q),
 	expand_command_clause((P => Body), (H :- B)),
 	H =.. Xs,
