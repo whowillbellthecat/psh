@@ -1,4 +1,5 @@
 #include <sys/types.h>
+#include <sys/ioctl.h>
 #include <dirent.h>
 #include <time.h>
 #include <unistd.h>
@@ -47,4 +48,14 @@ PlBool dir_file(char *dir, PlLong *file) {
 
 	*file = Pl_Create_Atom(dp->d_name);
 	return PL_TRUE;
+}
+
+
+PlBool tty_dim(PlLong *width, PlLong *height) {
+        struct winsize ws;
+        if (ioctl(0, TIOCGWINSZ, &ws) != 0)
+		return PL_FALSE; // todo: throw
+	*width = ws.ws_col;
+	*height = ws.ws_row;
+        return PL_TRUE;
 }
