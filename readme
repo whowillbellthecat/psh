@@ -14,10 +14,9 @@ Existing code may be thrown out, or rewritten without warning.
 psh has major limitations at present including:
 	no support for constructing streaming pipelines between external proceses
 	nothing resembling fd redirection
-	exceptions are printed instead of error messages
 	documentation is sparse and lacks reasonable conventions
 	no job control
-	crtl+C isn't caught and causes psh to exit
+	crtl+C only works when executing external processes (not when running prolog predicates)
 	no way to trap signals
 	editline support is a mess ( gprolog provides its own mechanism for this, which completes
 		atoms, but doesn't support vi-like keybindings or completing e.g., file names;
