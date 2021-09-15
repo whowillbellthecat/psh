@@ -30,7 +30,7 @@ start(X) :- prompt(X,Y),once(Y), false.
 start :- load_pshrc, !, start('$ ').
 start :- start('$ ').
 
-main :- argument_list(X), handle_arguments(X).
+main :- pass_sigint, argument_list(X), handle_arguments(X).
 
 handle_arguments(['-r']) :- !, start.
 handle_arguments(['-c',C]) :- !, ( once(C) ; true ), halt.

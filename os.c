@@ -1,6 +1,7 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <dirent.h>
+#include <signal.h>
 #include <time.h>
 #include <unistd.h>
 #include <gprolog.h>
@@ -58,4 +59,11 @@ PlBool tty_dim(PlLong *width, PlLong *height) {
 	*width = ws.ws_col;
 	*height = ws.ws_row;
         return PL_TRUE;
+}
+
+void handler(int sig) { }
+
+PlBool pass_sigint() {
+	signal(SIGINT, handler);
+	return PL_TRUE;
 }
