@@ -57,3 +57,20 @@ group([_],[],[],[X],[Y]) :- reverse(X,Y).
 groupby(X,Y,Z) :- list(X), group(X,G), maplist(@(Y),G,Z).
 groupby(X,Y,Z) :- callable(X), maplist(X,Y,Y0), groupby(Y0,Y,Z).
 groupby(X,Y) :- groupby(X,Y) <> (=).
+
+
+%todo: use difference lists to implement this with(out) append so that
+%       the result is a list of lists, not a list of list of lists.
+%       n.b. everything is already padded, but should permit join character
+merge_every(N,X,R) :- merge_every(N,X,[],R).
+merge_every(N,Xs,Acc,[Acc0|R]) :- length(Acc, N), reverse(Acc,Acc0), merge_every(N,Xs,[],R).
+merge_every(N,[X|Xs],Acc,R) :- length(Acc, M), M #< N, merge_every(N,Xs,[X|Acc],R).
+merge_every(N, [], Acc, [Acc0]) :- length(Acc, M), M #< N, M #> 0, reverse(Acc,Acc0).
+merge_every(_,[],[],[]).
+
+append_with(C, X, Y, R) :- append(X,[C|Y], R).
+
+% pad list to length N with C; fail if the length of the list is less than N
+pad(C,N,[X|Xs],[X|R]) :- N #> 0, N0 #= N-1, pad(C,N0,Xs,R).
+pad(C,N,[],[C|R]) :- N #> 0, N0 #= N-1, pad(C,N0,[],R).
+pad(_,0,[],[]).

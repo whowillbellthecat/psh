@@ -27,8 +27,17 @@ help((ls)/0, 'output files in the current directory').
 
 ls(D), [F] => directory_files(D,T), exclude(hidden_file_path,T,F).
 ls O :- var(O), !, ls('.',O).
-ls D :- nonvar(D),ls(D,F), maplist(puts,F).
+ls D :- nonvar(D),ls(D,F),columnize(F,R),maplist(println,R).
 (ls) :- ls '.'.
+
+columnize(X,Out) :-
+	tty_dim(W,_),
+        T <- max_list <-- maplist(atom_length,X),
+        C #= W // (T + 1),
+        maplist(atom_codes,X,X0),
+        maplist(pad(32,T),X0,R0),  % is this right? or should it be pad to the longest item in each row?
+        merge_every(C, R0, R),
+        maplist(fold(append_with(32)), R, Out).
 
 help((cd)/0, 'change the current working directory to $HOME').
 help((cd)/1, 'change the current working directory to X').
