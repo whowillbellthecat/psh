@@ -1,5 +1,7 @@
 :- include('op.pl').
 
+:- dynamic(psh_clause_line/3).
+
 build_dir('build').
 build_obj(F,R) :- build_dir(B), atom_concat(B,'/',B0), atom_concat(B0,F,R).
 
@@ -28,12 +30,27 @@ expand_command_clause((Head => Body), (Head0 :- R)) :-
         Head0 =.. [F|Vars0],
         resolve_clauses(Vars0,Vars,R/Body).
 
-% todo : dedupelicate this. Copied from io so I don't pull in other dependencies
-readall(S,M) :- read(S,L), (L= end_of_file->M=[];M=[L|Ls],readall(S,Ls)), !.
+psh_clause_metadata(X, R) :- findall(psh_clause_line(F,N,L), psh_clause_line(F,N,L), D),
+	append(X,[(:-multifile(psh_clause_line/3)),(:-discontiguous(psh_clause_line/3))|D],R).
 
-transform(X,R) :- apply_expand(expand_command_clause, X, X0), apply_expand(expand_psh_include, X0, R).
+readall(S,M) :- read(S,L),
+	(  L = end_of_file
+	-> M = []
+	;  M = [L|Ls],
+		(  clause_head_functor(L,F,N)
+		-> stream_line_column(S,Line,_),
+		   assertz(psh_clause_line(F, N, Line))
+		;  true ),
+	  readall(S,Ls)).
+
+clause_head_functor((P :- _), F, N) :- functor(P,F,N).
+clause_head_functor(P, F, N) :- functor(P,F,N), F \= (:-).
+clause_head_functor(P,P,error).
+
+transform --> apply_expand(expand_command_clause), apply_expand(expand_psh_include), psh_clause_metadata.
 
 make_transform(InF) :-
+	retractall(psh_clause_line(_,_,_)),
 	build_obj(InF,OutF),
 	open(InF,read,ReadS),
 	readall(ReadS, Data),
