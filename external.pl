@@ -27,15 +27,15 @@ ied(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),
 
 ed(C,F) :- number(C), !, atom(F), write_to_atom(A,C), ed_(A,F).
 ed(D,M) :- list(D), !, temporary_file('',psh_,T),open(T,write,S),maplist(println(S),D),close(S),ed T,cat(T,M),unlink(T).
-ed(F,M) :- atom_resolve(F,F0), var(M), cat(F0, A), ed(A,M).
-ed F :- atom_resolve(F,F0), config(editor,E), spawn(E, [F0]).
+ed(F), [M] => var(M), cat(F, A), ed(A,M).
+ed F => config(editor,E), spawn(E, [F]).
 (ed) :- config(editor, E), spawn(E, []).
 
 ed_(A,F) :- config(editor_line_flag,L), config(editor, E), spawn(E,[L,A,F]).
 ed_(_,F) :- ed F.
 
-file(X,M) :- atom_resolve(X,X0), cmd(file,[X0],M0), atom_codes(M,M0).
-file(X) :- atom_resolve(X,X0), spawn(file, [X0]).
+file(X), [M] => cmd(file,[X],M0), atom_codes(M,M0).
+file(X) => spawn(file, [X]).
 
 make T :- T == install, !, config(sudo_cmd, S), spawn(S, [make, install]).
 make T :- atom(T), spawn(make, [T]).
@@ -56,5 +56,6 @@ log(M) :- var(M),cmd(git,['-P',log,'--oneline'],M).
 log :- spawn(git, ['-P',log, '--oneline']).
 
 less(M) :- list(M),!,popen(less,write,S),maplist(println(S),M),close(S).
-less(M) :- atom_resolve(M,M0),spawn(less,[M0]).
+less(M) => spawn(less,[M]).
+
 man(M) :- spawn(man,[M]).
