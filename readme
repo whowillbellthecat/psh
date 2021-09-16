@@ -23,16 +23,33 @@ psh has major limitations at present including:
 		additionally if LINEDIT is set to 'no' and PSH_RLWRAP is set, then psh will run
 		itself under rlwrap ).
 
+Some of these limitations require extending GProlog, as the builtin os interface has some omissions.
+Most notably, signal handling (saving WAM registers at the toplevel to later restore the context is
+a bit convuluted without forking GProlog), stream/fd limitations (can't close stdin/stdout/stderr
+descriptiors by default), exec limitations (can't get by default exec and get pipes without going
+through a system shell - which, if the shell is written in GProlog, is slightly problematic), and
+limitations with line-editing (in particular, LINEDIT is in C, and uses switch statements to dispatch
+on character input {maybe this can be patched upstream?}. If LINEDIT isn't used, get_key becomes
+line-oriented, and the standard input stream can't be set to a byte stream by default). These
+should be surmountable... eventually. Other prolog implementations may not have this problem,
+but fail to meet other requirements (such as being able to produce standalone executables on
+arbitrary posix platforms).
+
 As of March 2021, I use psh as my login shell.
 
 psh can be built by running `make` (with any posix make). gplc, the gprolog
-compiler, is the only build dependency. Some psh commands assume other runtime
-dependencies, (e.g., less/1 assumes less is installed).
+compiler and gcc are require (other C compilers may work, clang seems to throw errors).
+Some psh commands assume other runtime dependencies, (e.g., less/1 assumes less is installed).
+
+The build process will first build make.pl, which will then expand psh specific
+constructs in the psh source. The expanded prolog files are named build/*.pl and subsequently
+compiled with gplc (which will call CC to compile os.c).
 
 psh uses op/3 to define operators for its syntax (and uses read/1 and call/1 on inputs).
-Thus every statement typed into psh is also valid prolog (and vice versa).
+Thus every statement typed into psh is also valid prolog (and vice versa). Operation defitions
+are in op.pl so they can be included seperately.
 
-psh pipes have the following syntax (note these are predicate compositions not pipes
+psh pipes have the following syntax (these are predicate compositions not pipes
 between external processes):
 	p <> q <> r.   %% equivilent to p(X), q(X,Y), r(Y,Z), puts(Z) (with printing
                        %% automatically lifted over lists)
@@ -44,7 +61,7 @@ between external processes):
 	X <-- p <> q.  %% call(p,Y), call(q,Y,X).
 	r <-- p <> q.  %% call(p,Y), call(q,Y,X), call(r,X).
 
-Note that one of the limitations of the current implementation is that routines
+One of the limitations of the current implementation is that routines
 which require variables to be instatiated early may throw errors when using <>,
 a routine used such as r in (r <-- p <> q) will however have its dependencies
 appropriately ordered; for example, if r and s are routines which require
