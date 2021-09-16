@@ -15,8 +15,8 @@ X via F :- maplist(portray_clause) <-- X via F.
 help((edit)/1, 'if X = +F/N, edit the containing file for functor F with arity N in editor').
 help((edit)/1, 'if atom(X), append \'.pl\' and open in editor').
 
-edit T => atom_concat(T,'.pl',F), ed F.
 edit(+P/N) :- atom(P), where(P/N, F), whichline(P/N,L), ed(L,F).
+edit T => atom_concat(T,'.pl',F), ed F.
 
 help(edit_pshrc/0, 'open pshrc in editor, then consult after editing').
 help(load_pshrc/0, 'reconsult pshrc').
