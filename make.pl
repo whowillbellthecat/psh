@@ -56,5 +56,4 @@ make_transform :-
 
 init_build_directory :- build_dir(B), catch(make_directory(B), error(system_error('File exists'),make_directory/1), true).
 
-
 :- initialization(make_transform).
