@@ -45,7 +45,6 @@ readall(S,M) :- read(S,L),
 
 clause_head_functor((P :- _), F, N) :- functor(P,F,N).
 clause_head_functor(P, F, N) :- functor(P,F,N), F \= (:-).
-clause_head_functor(P,P,error).
 
 transform --> apply_expand(expand_command_clause), apply_expand(expand_psh_include), psh_clause_metadata.
 
