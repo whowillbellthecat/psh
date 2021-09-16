@@ -7,11 +7,11 @@ CC=gcc
 psh: *.pl os.c
 	gplc --no-top-level make.pl
 	./make
-	gplc --c-compiler "$(CC)" p_psh.pl os.c
-	mv -f p_psh psh
+	gplc --c-compiler "$(CC)" build/psh.pl os.c
+	mv -f build/psh psh
 
 clean:
-	rm p_*.pl
+	rm build/*.pl
 	rm make
 	rm psh
 

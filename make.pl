@@ -1,10 +1,13 @@
 :- op(1200,xfx,=>).
 :- include('op.pl').
 
+build_dir('build').
+build_obj(F,R) :- build_dir(B), atom_concat(B,'/',B0), atom_concat(B0,F,R).
+
 resolve_clauses([X|Xs],[Y|Ys],(atom_resolve(X,Y), R)/T) :- resolve_clauses(Xs,Ys,R/T).
 resolve_clauses([],[],T/T).
 
-expand_psh_include(:-(psh_include(T)), :-(include(R))) :- prolog_file_name(T, F), atom_concat('p_',F,R).
+expand_psh_include(:-(psh_include(T)), :-(include(R))) :- prolog_file_name(T, F), build_obj(F,R).
 
 apply_expand(P, [X|Xs], [R|Rs]) :- call(P, X, R), !, apply_expand(P,Xs,Rs).
 apply_expand(P, [X|Xs], [X|Rs]) :- apply_expand(P, Xs, Rs).
@@ -32,7 +35,7 @@ readall(S,M) :- read(S,L), (L= end_of_file->M=[];M=[L|Ls],readall(S,Ls)), !.
 transform(X,R) :- apply_expand(expand_command_clause, X, X0), apply_expand(expand_psh_include, X0, R).
 
 make_transform(InF) :-
-	atom_concat('p_',InF, OutF),
+	build_obj(InF,OutF),
 	open(InF,read,ReadS),
 	readall(ReadS, Data),
 	close(ReadS),
@@ -42,13 +45,16 @@ make_transform(InF) :-
 	close(WriteS).
 
 make_transform :-
+	init_build_directory,
 	directory_files('.',T),
 	findall(E,
 		(  member(E, T),
-		   atom_concat(_,'.pl',E),
-		\+ atom_concat('p_',_,E)),
+		   atom_concat(_,'.pl',E)),
 	    Targets),
 	forall(member(E, Targets), make_transform(E)),
 	halt.
+
+init_build_directory :- build_dir(B), catch(make_directory(B), error(system_error('File exists'),make_directory/1), true).
+
 
 :- initialization(make_transform).
