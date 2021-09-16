@@ -1,4 +1,3 @@
-:- op(1200,xfx,=>).
 :- include('op.pl').
 
 build_dir('build').
