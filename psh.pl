@@ -15,7 +15,13 @@ X via F :- maplist(portray_clause) <-- X via F.
 help((edit)/1, 'if X = +F/N, edit the containing file for functor F with arity N in editor').
 help((edit)/1, 'if atom(X), append \'.pl\' and open in editor').
 
+edit(+P/N) :- psh_clause_line(P,N,L), !, where(P/N,F),
+	psh_build_dir(B),
+	decompose_file_name(F, Dir, Filename, '.pl'),
+	atom_concat(Prefix, 'build/', Dir), atom_concat(Prefix, Filename, P0), atom_concat(P0, '.pl', Path),
+	ed(L,Path).
 edit(+P/N) :- atom(P), where(P/N, F), whichline(P/N,L), ed(L,F).
+edit(-P/N) :- atom(P), where(P/N, F), whichline(P/N,L), ed(L,F).
 edit T => atom_concat(T,'.pl',F), ed F.
 
 help(edit_pshrc/0, 'open pshrc in editor, then consult after editing').
