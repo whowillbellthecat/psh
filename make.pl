@@ -39,6 +39,12 @@ psh_clause_defines(X,R) :-
 	   g_assign(psh_clause_line_defined, 1)
 	;  R = X ).
 
+export_build_dir(X,R) :- build_dir(B),
+	(  g_read(exported_build_dir, 0)
+	-> R = [psh_build_dir(B)|X],
+	   g_assign(exported_build_dir, 1)
+	;  R = X ).
+
 readall(S,M) :- read(S,L),
 	(  L = end_of_file
 	-> M = []
@@ -56,7 +62,7 @@ clause_head_functor(((P, _) --> _), F, N) :- !, functor(P,F,N).
 clause_head_functor((P --> _), F, N) :- !, functor(P,F,N).
 clause_head_functor(P, F, N) :- functor(P,F,N), F \= (:-).
 
-transform --> psh_clause_defines, apply_expand(expand_command_clause), apply_expand(expand_psh_include), psh_clause_metadata.
+transform --> psh_clause_defines, export_build_dir, apply_expand(expand_command_clause), apply_expand(expand_psh_include), psh_clause_metadata.
 
 make_transform(InF) :-
 	retractall(psh_clause_line(_,_,_)),
