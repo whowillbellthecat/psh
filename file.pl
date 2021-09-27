@@ -17,8 +17,24 @@ X://Y :- X://Y <> (=).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
 special_file_path('.'). special_file_path('..').
-directory(D) :- file_property(D,type(directory)).
+directory(D) => file_property(D,type(directory)).
+file_exists_(F) => file_exists(F).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
+
+path_file(X/Y,Y).
+path_file(X,Y) :- atom(X), X == Y.
+path_file(//X, X).
+path_file(~/X, X).
+
+% todo: possible race condition; need O_CREAT|O_EXCL (create file and error if file already exists)
+copy_file(F0,F1) :-
+	(  file_exists_(F1), directory(F1)
+	-> path_file(F0, F), copy_file_(F0, F1/F)
+	;  copy_file(F0,F1) ).
+copy_file_(F0,F1) =>
+	\+ file_exists(F1), open(F0,read,Source,[type(binary)]), open(F1,write,Sink,[type(binary)]), add_stream_mirror(Source,Sink),
+	get_discard(Source), close(Source), close(Sink).
+get_discard(S) :- repeat, get_byte(S,-1).
 
 help((ls)/2, 'unify R with a list of atoms containing the names of files in the directory X').
 help((ls)/1, 'unify R with a list of atoms containing the names of files in the current directory').
