@@ -67,3 +67,11 @@ PlBool pass_sigint() {
 	signal(SIGINT, handler);
 	return PL_TRUE;
 }
+
+PlBool new_pgid() {
+	pid_t pid;
+	pid = getpid();
+	if (setpgid(pid, pid) == 0)
+		return PL_TRUE;
+	return PL_FALSE;
+}

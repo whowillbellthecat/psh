@@ -3,3 +3,4 @@
 :- foreign(dir_file(+string,-atom), [choice_size(1)]).
 :- foreign(tty_dim(-positive,-positive)).
 :- foreign(pass_sigint).
+:- foreign(new_pgid).
