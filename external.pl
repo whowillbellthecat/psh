@@ -2,10 +2,12 @@
 %% todo: the spawn/cmd/etc. predicates need to be cleaned up. Each has different limitations. Luckily,
 %% my_spawn/3 provides the basis for unifying them (eventually).
 
-my_spawn(X,Args,Status) :- fork_prolog(N),
+my_spawn(X,Args,Status,fg) :- fork_prolog(N),
         (  N == 0
         -> new_pgid, prolog_pid(P0), tcsetpgrp(0,P0), do_exec(X,Args)
         ;  tcsetpgrp(0, N), job_wait(N,Status) ).
+my_spawn(X,Args,Status,bg) :- fork_prolog(N), (  N == 0 -> new_pgid, do_exec(X,Args) ; true ).
+my_spawn(X,Args,Status) :- my_spawn(X,Args,Status,fg).
 my_spawn(X,Args) :- my_spawn(X,Args,0), Args \= signaled.
 
 job_wait(Pid,Status) :-
