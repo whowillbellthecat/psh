@@ -1,11 +1,26 @@
+:- dynamic(psh_job_record/2).
 %% todo: the spawn/cmd/etc. predicates need to be cleaned up. Each has different limitations. Luckily,
 %% my_spawn/3 provides the basis for unifying them (eventually).
 
 my_spawn(X,Args,Status) :- fork_prolog(N),
         (  N == 0
         -> new_pgid, prolog_pid(P0), tcsetpgrp(0,P0), do_exec(X,Args)
-        ;  tcsetpgrp(0, N), wait(N,Status), prolog_pid(P), tcsetpgrp(0, P)).
-my_spawn(X,Args) :- my_spawn(X,Args,0).
+        ;  tcsetpgrp(0, N), job_wait(N,Status) ).
+my_spawn(X,Args) :- my_spawn(X,Args,0), Args \= signaled.
+
+job_wait(Pid,Status) :-
+	pwait(Pid,Mode,Status), prolog_pid(P), tcsetpgrp(0, P),
+	(  Mode == stopped
+	-> asserta(psh_job_record(stopped,Pid))
+	;  true ).
+
+fg(Pid,Status) :- retract(psh_job_record(stopped, Pid)), send_signal(Pid,'SIGCONT'), tcsetpgrp(0, Pid), job_wait(Pid,Status).
+fg(Pid) :- fg(Pid, 0).
+bg(Pid) :- retract(psh_job_record(stopped, Pid)), send_signal(Pid,'SIGCONT'). %% todo: track background processes (and when they terminate)
+bg :- psh_job_record(stopped,T), !, bg(T).
+bg :- puts('No matching job').
+fg :- psh_job_record(stopped,T), !, fg(T).
+fg :- puts('No matching job').
 
 cmd(Comm,Args,Output) :- spawn(Comm,Args,InW,OutR,ErrR), close(InW), close(ErrR), slurp(OutR, Output), close(OutR).
 cmd(Comm,Args,Input,Output) :-
