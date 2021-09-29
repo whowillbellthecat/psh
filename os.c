@@ -2,6 +2,7 @@
 #include <sys/ioctl.h>
 #include <dirent.h>
 #include <signal.h>
+#include <termios.h>
 #include <time.h>
 #include <unistd.h>
 #include <gprolog.h>
@@ -74,4 +75,31 @@ PlBool new_pgid() {
 	if (setpgid(pid, pid) == 0)
 		return PL_TRUE;
 	return PL_FALSE;
+}
+
+PlBool pl_tcsetpgrp(PlLong fd, PlLong pgrp_id) {
+	tcsetpgrp(fd, pgrp_id);
+	return PL_TRUE;
+}
+
+PlBool c_read(PlLong fd, PlTerm *codes) {
+	char buf[4];
+	int n;
+	n = read(fd, buf, 3);
+	buf[n] = 0;
+	if (n>0)
+		*codes = Pl_Mk_Codes(buf);
+	else if (n == 0)
+		*codes = Pl_Mk_Code(-1);
+	else
+		return PL_FALSE;
+	return PL_TRUE;
+}
+
+PlBool tcsetvtime(PlLong vtime) {
+	struct termios *tp;
+	tcgetattr(0, tp);
+	tp->c_cc[VTIME] = vtime;
+	tcsetattr(0, TCSANOW, tp);
+	return PL_TRUE;
 }
