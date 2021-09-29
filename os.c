@@ -103,3 +103,16 @@ PlBool tcsetvtime(PlLong vtime) {
 	tcsetattr(0, TCSANOW, tp);
 	return PL_TRUE;
 }
+
+PlBool do_exec(char *comm, PlTerm args) {
+	int n,i;
+	PlTerm array[20];
+	n = Pl_Rd_Proper_List_Check(args, array);
+	char *my_args[n+2];
+	my_args[0] = comm;
+	for(i=1;i<=n;i++) {
+		my_args[i] = Pl_Rd_String_Check(array[i-1]);
+	}
+	my_args[i] = 0;
+	execvp(comm, my_args);
+}

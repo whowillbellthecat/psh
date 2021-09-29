@@ -30,7 +30,7 @@ path_file(~/X, X).
 copy_file(F0,F1) :-
 	(  file_exists_(F1), directory(F1)
 	-> path_file(F0, F), copy_file_(F0, F1/F)
-	;  copy_file(F0,F1) ).
+	;  copy_file_(F0,F1) ).
 copy_file_(F0,F1) =>
 	\+ file_exists(F1), open(F0,read,Source,[type(binary)]), open(F1,write,Sink,[type(binary)]), add_stream_mirror(Source,Sink),
 	get_discard(Source), close(Source), close(Sink).
