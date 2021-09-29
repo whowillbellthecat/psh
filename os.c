@@ -1,5 +1,6 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #include <signal.h>
 #include <termios.h>
@@ -115,4 +116,22 @@ PlBool do_exec(char *comm, PlTerm args) {
 	}
 	my_args[i] = 0;
 	execvp(comm, my_args);
+}
+
+PlBool pwait(PlLong pid, PlLong *mode, PlLong *status) {
+	pid_t p;
+	int n;
+	p = waitpid(pid, &n, WUNTRACED);
+	if (WIFSTOPPED(n)) {
+		*mode = Pl_Create_Atom("stopped");
+		*status = 0;
+	} else if (WIFEXITED(n)) {
+		*mode = Pl_Create_Atom("exited");
+		*status = WEXITSTATUS(n);
+	} else if (WIFSIGNALED(n)) {
+		*mode = Pl_Create_Atom("signaled");
+		*status = WTERMSIG(n);
+	} else
+		Pl_Err_System(Pl_Create_Atom("unknown wait status -something went very wrong"));
+	return PL_TRUE;
 }

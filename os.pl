@@ -8,5 +8,6 @@
 :- foreign(c_read(+positive, -term)).
 :- foreign(tcsetvtime(+positive)).
 :- foreign(do_exec(+string,term)).
+:- foreign(pwait(+positive, -atom, -positive)).
 
 tcsetpgrp(X,Y) :- pl_tcsetpgrp(X,Y).
