@@ -1,80 +1,77 @@
-psh is an attempt to extend/replace the prolog top_level until it suffices to
-function as a system shell suitable for interactive use.
+psh is an experimental, non-posix system/login shell which extends prolog with
+a custom toplevel and functionality to facilitate interoperating with a posix
+system.
 
-psh differs from the prolog top_level in that it doesn't show alternate
-solutions or variable bindings. Additionally, psh defines operators to
-limit the number of explicit variables used. The prolog top_level can
-always be started via top_level/0 though, and is never far away.
+Presently psh is incomplete and has no releases or stable interfaces. Existing
+code may be thrown out or rewritten without warning.
 
 Note that built psh binaries may be affected by GNU Prolog's licensing terms (GPL/LGPL).
 
-At present, psh is incomplete and has no releases or stable interfaces.
-Existing code may be thrown out, or rewritten without warning.
+Currently psh has major limitations including:
+	Lacks pipeline constructors for composing external processes
+	Lacks high level fd redirection routines
+	Limited job control (background processes not tracked)
+	Sparse documentation
+	Prolog predicates in the same process can't be interrupted
+	Lacks a general way to trap signals
+	dubious line editing (see below)
 
-psh has major limitations at present including:
-	no support for constructing streaming pipelines between external proceses
-	nothing resembling fd redirection
-	documentation is sparse and lacks reasonable conventions
-	no job control
-	crtl+C only works when executing external processes (not when running prolog predicates)
-	no way to trap signals
-	editline support is a mess ( gprolog provides its own mechanism for this, which completes
-		atoms, but doesn't support vi-like keybindings or completing e.g., file names;
-		additionally if LINEDIT is set to 'no' and PSH_RLWRAP is set, then psh will run
-		itself under rlwrap ).
+Some of these limitations require extending Gprolog as the builtin os interface has some omissions. Other
+prolog implementations may not require extension (e.g., swi-prolog exposes a predicate for registering signal handlers),
+but fail to meet other requirements (such as supporting native code compilation).
 
-Some of these limitations require extending GProlog, as the builtin os interface has some omissions.
-Most notably, signal handling (saving WAM registers at the toplevel to later restore the context is
-a bit convuluted without forking GProlog), stream/fd limitations (can't close stdin/stdout/stderr
-descriptiors by default), exec limitations (can't get by default exec and get pipes without going
-through a system shell - which, if the shell is written in GProlog, is slightly problematic), and
-limitations with line-editing (in particular, LINEDIT is in C, and uses switch statements to dispatch
-on character input {maybe this can be patched upstream?}. If LINEDIT isn't used, get_key becomes
-line-oriented, and the standard input stream can't be set to a byte stream by default). These
-should be surmountable... eventually. Other prolog implementations may not have this problem,
-but fail to meet other requirements (such as being able to produce standalone executables on
-arbitrary posix platforms).
+Currently, line editing support is a bit underwhelming. GProlog does provide its own 'linedit' mechanism which
+allows expanding prolog atoms. It doesn't, however, support extension or vi-like keybindings. If vi-like keybindings
+are needed, install rlwrap, set LINEDIT='no', set PSH_RLWRAP, and set the vi editing mode in ~/.inputrc (see readline(3));
+doing so will cause psh to run itself under rlwrap automatically. I hope to eventually implement at least basic line editing
+functionality, supporting at least a subset of vi keybindings, line history, and basic file-path-aware tab completion.
 
-As of March 2021, I use psh as my login shell.
+Despite its myriad limitations, I do use psh as my login shell.
 
-psh can be built by running `make` (with any posix make). gplc, the gprolog
-compiler and gcc are require (other C compilers may work, clang seems to throw errors).
-Some psh commands assume other runtime dependencies, (e.g., less/1 assumes less is installed).
+psh can be built by running `make` (any posix make should work). gplc - the gprolog compiler - and
+gcc are build dependencies (other C compilers may work, but gplc appears to output errors when clang
+is used). Some psh commands assume other runtime dependencies (e.g., less/1 assumes less is installed),
+but these predicates can fail without affecting the functioning of the larger system.
 
-The build process will first build make.pl, which will then expand psh specific
-constructs in the psh source. The expanded prolog files are named build/*.pl and subsequently
-compiled with gplc (which will call CC to compile os.c).
+The build process will first build make.pl, which will then expand psh specific constructs in the psh
+source. The expanded prolog files are named build/*.pl and subsequently compiled with gplc (which will
+call CC to compile os.c). The syntax of the psh source code requires make.pl to expand them. Currently,
+code loaded into psh must be valid prolog and thus cannot use these constructs.
 
-psh uses op/3 to define operators for its syntax (and uses read/1 and call/1 on inputs).
-Thus every statement typed into psh is also valid prolog (and vice versa). Operation defitions
-are in op.pl so they can be included seperately.
+Psh itself also implements operators using op/3, which can be used in code loaded into psh (e.g., via
+consult, [user], etc.). The op/3 directives are in op.pl so that they can be included separately.
 
-psh pipes have the following syntax (these are predicate compositions not pipes
-between external processes):
-	p <> q <> r.   %% equivilent to p(X), q(X,Y), r(Y,Z), puts(Z) (with printing
-                       %% automatically lifted over lists)
+The predicate help/0 will output a (small) subset of implemented predicates. Psh predicates intended for
+use at the psh top level are highly modal. In particular, if a predicate p/(n+1) has an 'output' variable,
+it is generally the last variable, and p/n will generally output to the terminal.
 
-        X <- p.        %% call(p,X).
-	var <- p.      %% call(p,X), g_assign(var,X). (i.e, assign global variable)
+There are two primary composition operators: (<>)/2 and (<--)/2. The expression (p <> q) is equivalent to
+(p(X), q(X,Y), puts(Y)), with the additional property that if Y is a list puts is lifted over it. The expression
+(p <-- q) is equivalent to (call(q,X), call(p,X)). These expressions can be chained (e.g., (s <-- p <> q <> r)).
 
-	X <-- p.       %% call(p,X).
-	X <-- p <> q.  %% call(p,Y), call(q,Y,X).
-	r <-- p <> q.  %% call(p,Y), call(q,Y,X), call(r,X).
+Due to the way these are implemented, routines which require variables to be instantiated early may throw errors
+when using (<>). This can be corrected by using (<--) instead. These operators are likely to be replaced. Their
+use can be made more convenient with the combinatorial predicates (dup, rot, swap, etc) which resemble their forth
+counterparts.
 
-One of the limitations of the current implementation is that routines
-which require variables to be instatiated early may throw errors when using <>,
-a routine used such as r in (r <-- p <> q) will however have its dependencies
-appropriately ordered; for example, if r and s are routines which require
-instatiated variables, and p and q which do not, then the following will avoid
-exceptions:
-	s <-- r <-- p <> q.  % n.b. this calls s/1 not s/2
+Currently, psh will resolve predicates to atoms in some cases. This faulty enables inputing structural path expressions
+(non-atomic) path expressions. Due to the current mechanism, any functor f/n with an associated predicate f/n+1 where n>0
+can be used in path expressions, but this is liable to change. The principal constructors are:
+	(//X)		relative path -> root-prefixed absolute path
+	(~/X)		relative path -> user-home-prefixed absolute path
+	(X/Y)		path -> file component -> path
+	(X dot Y)	atom -> atom -> atom (joined by a '.' character)
+	(X ++ Y)	atom -> atom -> atom (concatenation)
 
-The precedence for these operators is set to be lower than comma so that
-they can be used such as in (X <- p, Y <- q(X)).
+The underlying predicate that accomplishes this is atom_resolve/2. In psh source files, the following expansion occurs:
+	p(Q), [R] => q(Q,T), r(T,R).
+		expands to:
+	p(Q,R) :- atom_resolve(Q,Q0), q(Q0,T), r(T,R).
+That is to say that occurrences of (=>) in the psh source indicate expressions which take path expressions as input (the
+list following the predicate in the head of the clause, mirroring DCG semi-context notation, indicates a list of variables
+of the head functor which should not be affected by the aforementioned transformation).
 
-Additionally a syntax somewhat similar to posix shell variables is supported:
-	$var       %% g_read(var,X),puts(X). (i.e, print global variable)
-	$var <> p. %% g_read(var,X),call(p,X).
+--
 
 Many routines, such as cd/pwd/ed/file are set as unary operators and need to
 be surrounded in parenthesis for them to be used as atoms. Some notable routines include:
@@ -86,7 +83,7 @@ fl +f/n.           % display code from the source file for functor f with arity 
 fl filename.       % show the source of filename.pl using portray_clause
 edit filename.     % edit filename.pl in EDITOR
 edit +f/n.         % edit the source file for functor f with arity n in EDITOR
-	           %    ( for editors other than vi, add config(editor_line_flag,FLAG) to pshrc to support jumping to the
+                   %    ( for editors other than vi, add config(editor_line_flag,FLAG) to pshrc to support jumping to the
                    %      the line number a predicate is defined on).
 cd dir.            % change directory to dir
 pwd.               % working directory
@@ -102,7 +99,7 @@ limit(list).       % output first 10 items in list
 limit(c,list).     % output first c items in list (or last c items if negative).
 pred via filename. % display the source for predicate pred as defined in filename
 where p/n.         % display the path to the file that defines predicate p with arity n
-cat filename.      % this is badly named -- it only outputs filename and doesn't concatentate; sorry not sorry
+cat filename.      % this is badly named -- it only outputs filename and doesn't concatenate; sorry not sorry
 cat F.             % read from stdin into variable F
 cat(filename,M).   % read filename into variable M (as a list of codes).
 println(S,codes).  % print codes to stream S
@@ -135,26 +132,13 @@ groupby(Pred,X,R).      % call(Pred,X,X0), and group X according to X0/=
 order(X,R). % R is a (origin 1) permutation vector which will sort the list X if applied to it
 R <- A@B    % R is A indexed by (origin 1) list of indices B
 
+
 Additional operators are defined for convenience:
-	p &= q             % defined as `p <> filter(q).'
-	p <> q each        % each modifies q(X,Y) to act instead as maplist(q,X,Y)
-	p <> q with l each % if l is a list of items l0,..,ln, `with' generates a list of closures
+        p &= q             % defined as `p <> filter(q).'
+        p <> q each        % each modifies q(X,Y) to act instead as maplist(q,X,Y)
+        p <> q with l each % if l is a list of items l0,..,ln, `with' generates a list of closures
                            % Q = q(l0),..,q(ln) which `each' modifies to act as maplist(call,Q,X,Y).
-	p && q             % &&/3 calls both p and q on the third argument, &&/2 just calls p and q.
-
-Psh will also 'resolve' predicates to atoms in some cases. This faculty supports inputing path expressions
-with fewer quotes, but also permits more general expressions as inputs predicates which support it.  The following
-conventions are used:
-	A predicate, atom_resolve(X,Y) is defined which will unify X with Y iff X is an atom, or call(X,Y) otherwise.
-
-	Operators such as (//), (~/), (/), (dot), (++) are defined to build up path expressions. These use atom_resolve
-	so that they can be nested. An expression such as:
-		//home/me/file dot pdf
-	will reduce to the atom '/home/me/file.pdf'.
-
-	Some psh 'routines', such as cd, ls, etc. also use atom_resolve so that path expressions can be reduced. Thus:
-		cd ~/src/psh.
-	will work as expected.
+        p && q             % &&/3 calls both p and q on the third argument, &&/2 just calls p and q.
 
 Examples:
 --
