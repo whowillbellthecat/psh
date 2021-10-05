@@ -11,6 +11,9 @@ resolve_clauses([],[],T/T).
 
 expand_psh_include(:-(psh_include(T)), :-(include(R))) :- prolog_file_name(T, F), build_obj(F,R), assertz(included(F)).
 
+expand_type_sig((Pred ?> HelpString @> _), help(Pred, HelpString)) :- !.
+expand_type_sig((Pred ?> HelpString), help(Pred, HelpString)).
+
 apply_expand(P, [X|Xs], [R|Rs]) :- call(P, X, R), !, apply_expand(P,Xs,Rs).
 apply_expand(P, [X|Xs], [X|Rs]) :- apply_expand(P, Xs, Rs).
 apply_expand(_, [], []).
@@ -62,7 +65,8 @@ clause_head_functor(((P, _) --> _), F, N) :- !, functor(P,F,N).
 clause_head_functor((P --> _), F, N) :- !, functor(P,F,N).
 clause_head_functor(P, F, N) :- functor(P,F,N), F \= (:-).
 
-transform --> psh_clause_defines, export_build_dir, apply_expand(expand_command_clause), apply_expand(expand_psh_include), psh_clause_metadata.
+transform --> psh_clause_defines, export_build_dir, apply_expand(expand_command_clause), apply_expand(expand_psh_include), 
+	apply_expand(expand_type_sig), psh_clause_metadata.
 
 make_transform(InF) :-
 	retractall(psh_clause_line(_,_,_)),
@@ -89,7 +93,6 @@ make_transform :-
 	halt.
 
 init_build_directory :- build_dir(B), catch(make_directory(B), error(system_error('File exists'),make_directory/1), true).
-
 main :- argument_list([X]), init_build_directory, make_transform(X), halt.
 
 :- initialization(main).
