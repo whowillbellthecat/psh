@@ -10,16 +10,38 @@ fold(P, Acc, [X|Xs],R) :- call(P,Acc,X,Acc0), fold(P,Acc0,Xs,R).
 fold(_,Acc,[],Acc).
 fold(P,[X|Xs],R) :- fold(P,X,Xs,R).
 
-P &= Q :- P <> filter(Q).
+(&=)/3 ?> 'X &= Y is shorthand for P &= filter(Y)'.
 &=(P,Q,R) :- <>(P,filter(Q),R).
+(&=)/2 ?> 'X &= Y is shorthand for P &= filter(Y)'.
+P &= Q :- P <> filter(Q).
 
-% Y is a list consisting of N repetitions of X.
+repeat/3 ?> 'Z is a list containing Y repetitions of X'
+  @> repeat(t,0,[])
+  @> repeat(t,1,[t])
+  @> repeat(7,10,[7,7,7,7,7,7,7,7,7,7])
+  @> (repeat(X,N,[t,t,t]), X == t, N == 3)
+  @> (repeat("test",3,Z), Z == ["test", "test", "test"])
+  @> (repeat(abc,M,R), R = [abc,abc,abc], M == 3).
 repeat(_,0,[]).
-repeat(X,N,[X|Y]) :- N>0, N0 is N-1, repeat(X,N0,Y).
+repeat(X,N,[X|Y]) :- N #> 0, N #= N0 + 1, repeat(X,N0,Y).
 
-filter(_,[],[]). filter(P,[X|Xs],Y):-(call(P,X)->Y=[X|Ys];Y=Ys),filter(P,Xs,Ys),!.
+filter/3 ?> 'R is a list of elements of Y for which call(X,Y) holds'
+  @> filter(<(3), [1,3,7,8,3,7], [7,8,7])
+  @> filter(swap(length,2), ["hi","there","test","me"], ["hi","me"])
+  @> filter(atom,[1,a,b,7,3,c,de], [a,b,c,de]).
+filter(_,[],[]).
+filter(P,[X|Xs],Y):-(call(P,X)->Y=[X|Ys];Y=Ys),filter(P,Xs,Ys).
+
+exclude/3 ?> 'R is the list of elements of Y for which call(X,Y) does not hold'
+  @> exclude(<(3), [1,3,7,8,3,7], [1,3,3])
+  @> exclude(swap(length,2), ["hi","there","test","me"], ["there","test"])
+  @> exclude(atom,[1,a,b,7,3,c,de], [1,7,3]).
 exclude(P,X,Y) :- filter(P,X,T), subtract(X,T,Y).
 
+atom_join/3 ?> 'R is the atom formed by joining the list of atoms X with atom C'
+  @> atom_join([file,path,example], '/', 'file/path/example')
+  @> atom_join(['31257',pdf], '.', '31257.pdf')
+  @> atom_join([test], blah, test).
 atom_join([X],_,X).
 atom_join([X|Xs],C,R) :- atom_join(Xs,C,Rs),atom_concat(X,C,R0),atom_concat(R0,Rs,R).
 
