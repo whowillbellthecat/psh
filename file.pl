@@ -17,7 +17,10 @@ X://Y :- X://Y <> (=).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
 special_file_path('.'). special_file_path('..').
+
+directory/1 ?> 'X is a directory'.
 directory(D) => file_property(D,type(directory)).
+
 file_exists_(F) => file_exists(F).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
 
@@ -27,6 +30,8 @@ path_file(//X, X).
 path_file(~/X, X).
 
 % todo: possible race condition; need O_CREAT|O_EXCL (create file and error if file already exists)
+
+copy_file/2 ?> 'copy file at path X to path Y; if Y denotes a directory then copy file X into directory Y'.
 copy_file(F0,F1) :-
 	(  file_exists_(F1), directory(F1)
 	-> path_file(F0, F), copy_file_(F0, F1/F)
@@ -45,13 +50,17 @@ columnize(X,Out) :-
         merge_every(C, R0, R),
         maplist(fold(append_with(32)), R, Out).
 
-help((cd)/0, 'change the current working directory to $HOME').
-help((cd)/1, 'change the current working directory to X').
-help((pwd)/0, 'print the current working directory').
-help((pwd)/1, 'unify X with the current working directory').
+(cd)/1 ?> 'change the current working directory to X'.
+cd X => change_directory(X). 
 
-cd X => change_directory(X). (cd) :- cd '~'.
-pwd X :- working_directory(X). (pwd) :- pwd X, puts(X).
+(cd)/0 ?> 'change the current working directory to $HOME'.
+(cd) :- cd '~'.
+
+(pwd)/1 ?> 'unify X with the current working directory'.
+pwd X :- working_directory(X).
+
+(pwd)/0 ?> 'print the current working directory'.
+(pwd) :- pwd X, puts(X).
 
 % todo : add unlimited depth
 
@@ -80,15 +89,27 @@ find(P) :- nonvar(P), find(P,1), !.
 find(O) :- var(O), find(atom,1,'.',O).
 find :- find(atom,1).
 
-%file listing, with output similar to listing/1.
+
+(fl)/2 ?> 'R is a list containing the clauses of X where X is a file path or predicate expression'.
 fl(+X/N,M) :- !, M <-- where X/N <> via(X/N).
 fl(X), [M] => prolog_file_name(X,F), open(F, read, S), readall(S,M).
+
+(fl)/1 ?> 'output the clauses of X where X is a file path or predicate expression'.
+(fl)/1 ?> 'R is a list of atoms containing files ending with \'.pl\' in the current directory'.
 fl X :- nonvar(X), !, fl(X,M), maplist(portray_clause,M).
 fl X :- var(X), find(endswith('.pl'),X).
+
+(fl)/0 ?> 'output a list of files ending in \'.pl\' in the current directory'.
 (fl) :- fl(X), maplist(puts,X).
 
+(where)/2 ?> 'R is the filename the predicate X/N was defined in'.
 where(X/N,F) :- functor(C,X,N), predicate_property(C,prolog_file(F)).
+
+(where)/1 ?> 'output the filename the predicate X/N was defined in'.
 where (X/N) :- where(X/N,F), puts(F).
 
+whichline/2 ?> 'R is the line number predicate X/N was defined on'.
 whichline(X/N,L) :- functor(C,X,N), predicate_property(C,prolog_line(L)).
+
+whichline/1 ?> 'output the line number predicate X/N was defined on'.
 whichline(X/N) :- puts <-- whichline(X/N).
