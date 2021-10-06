@@ -7,6 +7,7 @@
 :- psh_include(misc).
 :- psh_include(config).
 :- psh_include(tty).
+:- psh_include(test).
 :- psh_include(shell).
 
 via(X,F,R) :- R <-- fl F <> filter(cf(X)).

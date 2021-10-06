@@ -11,8 +11,11 @@ resolve_clauses([],[],T/T).
 
 expand_psh_include(:-(psh_include(T)), :-(include(R))) :- prolog_file_name(T, F), build_obj(F,R), assertz(included(F)).
 
-expand_type_sig((Pred ?> HelpString @> _), help(Pred, HelpString)) :- !.
-expand_type_sig((Pred ?> HelpString), help(Pred, HelpString)).
+expand_type_sig((Pred ?> HelpString @> Tests), psh_meta(Pred, HelpString, Xs)) :- !, list_tests(Xs, Tests).
+expand_type_sig((Pred ?> HelpString), psh_meta(Pred, HelpString, [])).
+
+list_tests([X|Xs], (X @> Ys)) :- !, list_tests(Xs, Ys).
+list_tests([X], X).
 
 apply_expand(P, [X|Xs], [R|Rs]) :- call(P, X, R), !, apply_expand(P,Xs,Rs).
 apply_expand(P, [X|Xs], [X|Rs]) :- apply_expand(P, Xs, Rs).
