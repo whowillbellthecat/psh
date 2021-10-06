@@ -9,11 +9,11 @@
 help :-
 	write('Please note that psh is very incomplete, with no releases or stable interfaces.'), nl,
 	write('Supported commands: '),
-	forall(help(C/N,_), (write(C/N), write(' '))),
+	forall((help(C/N,_) ; psh_meta(C/N,_,_)), (write(C/N), write(' '))),
 	nl, nl,
 	write('For help with Command, run help(Command).'), nl.
 
-help(C) :- atom(C), findall(N-H, help(C/N,H), H), keysort(H,H0), forall(member(N-M, H0), put_help_msg(C,N,M)).
+help(C) :- atom(C), findall(N-H, (help(C/N,H);psh_meta(C/N,H,_)), H), keysort(H,H0), forall(member(N-M, H0), put_help_msg(C,N,M)).
 help(C/N) :- help(C/N, H), !, put_help_msg(C,N,H).
 help(C/N) :- psh_meta(C/N, H, _), put_help_msg(C,N,H).
 
