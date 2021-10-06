@@ -10,7 +10,7 @@
 :- psh_include(test).
 :- psh_include(shell).
 
-via(X,F,R) :- R <-- fl F <> filter(cf(X)).
+via(X,F,R) :- atom_resolve(F, F0), R <-- fl F0 &= cf(X).
 X via F :- maplist(portray_clause) <-- X via F.
 
 help((edit)/1, 'if X = +F/N, edit the containing file for functor F with arity N in editor').
