@@ -24,6 +24,13 @@ directory(D) => file_property(D,type(directory)).
 file_exists_(F) => file_exists(F).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
 
+% XXX: is it 'correct' that path file doesn't use atom resolve?
+path_file ?> 'Y is the file component of path X'
+  @> path_file(this/(is)/a/test, test)
+  @> path_file(this, this)
+  @> path_file(~/test/here, here)
+  @> path_file(//t/e/f, f)
+  @> path_file(//t, t).
 path_file(X/Y,Y).
 path_file(X,Y) :- atom(X), X == Y.
 path_file(//X, X).
@@ -41,11 +48,18 @@ copy_file_(F0,F1) =>
 	get_discard(Source), close(Source), close(Sink).
 get_discard(S) :- repeat, get_byte(S,-1).
 
-columnize(X,Out) :-
+
+% todo: implement a columnize/3 that takes tty size and is easier to test
+% todo: implement a columnize/1 that prints to tty
+columnize/2 ?> 'R is a list of lists codes containing lines filled with the spaced elements of X arranged into columns'
+  @> columnize([],[[]]).
+
+columnize([],[[]]).
+columnize([X|Xs],Out) :-
 	tty_dim(W,_),
-        T <- max_list <-- maplist(atom_length,X),
+        T <- max_list <-- maplist(atom_length,[X|Xs]),
         C #= W // (T + 1),
-        maplist(atom_codes,X,X0),
+        maplist(atom_codes,[X|Xs],X0),
         maplist(pad(32,T),X0,R0),  % is this right? or should it be pad to the longest item in each row?
         merge_every(C, R0, R),
         maplist(fold(append_with(32)), R, Out).
