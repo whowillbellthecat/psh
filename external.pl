@@ -54,10 +54,10 @@ ied(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),
 ed(C,F) :- number(C), !, atom(F), write_to_atom(A,C), ed_(A,F).
 ed(D,M) :- list(D), !, temporary_file('',psh_,T),open(T,write,S),maplist(println(S),D),close(S),ed T,cat(T,M),unlink(T).
 ed(F), [M] => var(M), cat(F, A), ed(A,M).
-ed F => config(editor,E), spawn(E, [F]).
-(ed) :- config(editor, E), spawn(E, []).
+ed F => config(editor,E), my_spawn(E, [F]).
+(ed) :- config(editor, E), my_spawn(E, []).
 
-ed_(A,F) :- config(editor_line_flag,L), config(editor, E), spawn(E,[L,A,F]).
+ed_(A,F) :- config(editor_line_flag,L), config(editor, E), my_spawn(E,[L,A,F]).
 ed_(_,F) :- ed F.
 
 file(X), [M] => cmd(file,[X],M0), atom_codes(M,M0).
