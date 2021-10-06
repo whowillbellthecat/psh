@@ -19,5 +19,5 @@ help(C/N) :- psh_meta(C/N, H, _), put_help_msg(C,N,H).
 
 put_help_msg(C,N,M) :- puts(C/N), write('\t'), puts(M), put_source_code(C/N).
 
-put_source_code(C/N) :- g_read(help_outputs_code, 0), !.
-put_source_code(C/N) :- g_read(help_outputs_code, 1), nl, where(C/N,File), whichline(C/N,Line), puts('Defined in':File:Line), fl +C/N.
+put_source_code(C/N) :- config(help_outputs_code, true), !, nl, where(C/N,File), whichline(C/N,Line), puts('Defined in':File:Line), fl +C/N.
+put_source_code(C/N).
