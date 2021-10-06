@@ -7,10 +7,11 @@
 :- dynamic(psh_meta/3).
 
 help :-
-	write('Please note that psh is very incomplete, with no releases or stable interfaces.'), nl,
-	write('Supported commands: '),
-	forall((help(C/N,_) ; psh_meta(C/N,_,_)), (write(C/N), write(' '))),
-	nl, nl,
+	puts('Please note that psh is very incomplete, with no releases or stable interfaces.'), nl,
+	puts('Supported commands: '),
+	findall(C/N,(help(C/N,_) ; psh_meta(C/N,_,_)), X),
+	maplist(println) <-- maplist(swap(write_to_atom),X) <> columnize,
+	nl,nl,
 	write('For help with Command, run help(Command).'), nl.
 
 help(C) :- atom(C), findall(N-H, (help(C/N,H);psh_meta(C/N,H,_)), H), keysort(H,H0), forall(member(N-M, H0), put_help_msg(C,N,M)).
