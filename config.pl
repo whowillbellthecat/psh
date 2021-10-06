@@ -16,4 +16,26 @@ config(sudo_cmd, X) :- environ('SUDO', X).
 config(sudo_cmd, doas) :- \+ environ('SUDO',_).
 
 config(X) :- config(X,Y), write(Y), nl.
-config :- forall(config(X,Y), (write_to_atom(A,Y), format('~24a ~a~n', [X,A]))).
+config :- forall(configurable(X,_),
+	(  config(X,Y)
+	-> write_to_atom(A,Y), format('~24a ~a~n', [X,A])
+	;  '<unset>' ++ X )).
+
+configurable(editor, atom).
+configurable(editor_line_flag, atom).
+configurable(sudo_cmd, atom).
+configurable(pshrc, term).
+configurable(help_outputs_code, bool).
+
+set(X,Y) :- configurable(X,Type), !, config_typecheck(Type,Y), ( retractall(config(X,_)) -> asserta(config(X,Y)) ; asserta(config(X,Y)) ).
+set(X,_) :- throw(error(not_configurable(X), set/2)).
+
+unset(X) :- retractall(config(X,_)), ! ; \+ config(X,_).
+
+config_typecheck(X,Y) :- type_data(X,Y), !.
+config_typecheck(_,Y) :- throw(error(type_error(Y), config_typecheck/2)).
+
+type_data(atom, Y) :- atom(Y).
+type_data(term, _).
+type_data(bool, true).
+type_data(bool, false).
