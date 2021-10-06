@@ -17,4 +17,7 @@ help(C) :- atom(C), findall(N-H, (help(C/N,H);psh_meta(C/N,H,_)), H), keysort(H,
 help(C/N) :- help(C/N, H), !, put_help_msg(C,N,H).
 help(C/N) :- psh_meta(C/N, H, _), put_help_msg(C,N,H).
 
-put_help_msg(C,N,M) :- puts(C/N), write('\t'), puts(M).
+put_help_msg(C,N,M) :- puts(C/N), write('\t'), puts(M), put_source_code(C/N).
+
+put_source_code(C/N) :- g_read(help_outputs_code, 0), !.
+put_source_code(C/N) :- g_read(help_outputs_code, 1), nl, where(C/N,File), whichline(C/N,Line), puts('Defined in':File:Line), fl +C/N.
