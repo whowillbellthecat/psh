@@ -91,7 +91,8 @@ find :- find(atom,1).
 
 
 (fl)/2 ?> 'R is a list containing the clauses of X where X is a file path or predicate expression'.
-fl(+X/N,M) :- !, M <-- where X/N <> via(X/N).
+fl(+X/N,M) :- psh_clause_line(X,N,_), !, where(X/N, F), decompose_file_name(F, Dir, Filename, '.pl'), atom_concat(Prefix,'build/',Dir), M <- X/N via Prefix/Filename dot pl.
+fl(+X/N,M) :- !, M <- where X/N <> via(X/N).
 fl(X), [M] => prolog_file_name(X,F), open(F, read, S), readall(S,M).
 
 (fl)/1 ?> 'output the clauses of X where X is a file path or predicate expression'.
