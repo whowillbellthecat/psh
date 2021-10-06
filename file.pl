@@ -36,16 +36,6 @@ copy_file_(F0,F1) =>
 	get_discard(Source), close(Source), close(Sink).
 get_discard(S) :- repeat, get_byte(S,-1).
 
-help((ls)/2, 'unify R with a list of atoms containing the names of files in the directory X').
-help((ls)/1, 'unify R with a list of atoms containing the names of files in the current directory').
-help((ls)/1, 'output files in the directory X').
-help((ls)/0, 'output files in the current directory').
-
-ls(D), [F] => directory_files(D,T), exclude(hidden_file_path,T,F).
-ls O :- var(O), !, ls('.',O).
-ls D :- nonvar(D),ls(D,F),columnize(F,R),maplist(println,R).
-(ls) :- ls '.'.
-
 columnize(X,Out) :-
 	tty_dim(W,_),
         T <- max_list <-- maplist(atom_length,X),
