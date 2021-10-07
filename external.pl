@@ -84,26 +84,28 @@ file(X), [M] => cmd(file,[X],M0), atom_codes(M,M0).
 (file)/1 ?> 'run file(1) on the file given by the path expression X'.
 file(X) => spawn(file, [X]).
 
+(make)/1 ?> 'run `make X` for any atom X (if X == install, then run with sudo_cmd)'.
 make T :- T == install, !, config(sudo_cmd, S), spawn(S, [make, install]).
 make T :- atom(T), spawn(make, [T]).
+(make)/0 ?> 'run `make`'.
 (make) :- spawn(make, []).
 
-commit/0 ?> 'git commit'.
+commit/0 ?> 'run `git commit`'.
 commit :- spawn(git, [commit]).
 
-status/0 ?> 'git status'.
+status/0 ?> 'run `git status`'.
 status :- spawn(git, [status,'-s']).
 
 (add)/1 ?> 'git add the file represented by path expression X'.
 add X => spawn(git, [add,X]).
 
-(diff)/1 ?> 'git -P diff X, where X is a path expression'.
+(diff)/1 ?> 'run `git -P diff X`, where X is a path expression'.
 diff X => spawn(git, ['-P',diff,X]).
 
-(diff)/0 ?> 'git -P diff'.
+(diff)/0 ?> 'run `git -P diff`'.
 (diff) :- spawn(git, ['-P',diff]).
 
-(push)/0 ?> 'git push'.
+(push)/0 ?> 'run `git push`'.
 push :- spawn(git, [push]).
 
 log/2 ?> 'Y is a list of lines (as codes) with the git log for the repository given by path expression X'.
