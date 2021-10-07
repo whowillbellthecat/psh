@@ -10,17 +10,27 @@ my_spawn(X,Args,Status,bg) :- fork_prolog(N), (  N == 0 -> new_pgid, do_exec(X,A
 my_spawn(X,Args,Status) :- my_spawn(X,Args,Status,fg).
 my_spawn(X,Args) :- my_spawn(X,Args,0), Args \= signaled.
 
+
+job_wait/2 ?> 'Y is the wait status of process X; this predicate is job-control-aware'.
 job_wait(Pid,Status) :-
 	pwait(Pid,Mode,Status), prolog_pid(P), tcsetpgrp(0, P),
 	(  Mode == stopped
 	-> asserta(psh_job_record(stopped,Pid))
 	;  true ).
 
+fg/2 ?> 'Y is the wait status of pgid X after resuming the job'.
 fg(Pid,Status) :- retract(psh_job_record(stopped, Pid)), send_signal(Pid,'SIGCONT'), tcsetpgrp(0, Pid), job_wait(Pid,Status).
+fg/1 ?> 'resume pgid X in the foreground; false if pgid X terminates with nonzero exit status'.
 fg(Pid) :- fg(Pid, 0).
+
+bg/1 ?> 'resume pgid X in the background'.
 bg(Pid) :- retract(psh_job_record(stopped, Pid)), send_signal(Pid,'SIGCONT'). %% todo: track background processes (and when they terminate)
+
+bg/0 ?> 'resume last process in background'.
 bg :- psh_job_record(stopped,T), !, bg(T).
 bg :- puts('No matching job').
+
+fg/0 ?> 'resume last process in foreground'.
 fg :- psh_job_record(stopped,T), !, fg(T).
 fg :- puts('No matching job').
 
