@@ -12,7 +12,10 @@
 :- psh_include(make_h).
 :- psh_include(psh_make).
 
+(via)/3 ?> 'R is a list of the clauses of X = P/N contained in file Y'.
 via(X,F,R) :- atom_resolve(F, F0), R <-- fl F0 &= cf(X).
+
+(via)/2 ?> 'output (portray) the clauses of X = P/N contained in file Y'.
 X via F :- maplist(portray_clause) <-- X via F.
 
 (edit)/1 ?> 'if X = +F/N, edit the containing file for functor F with arity N in editor'.
