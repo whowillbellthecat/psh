@@ -6,6 +6,7 @@
 :- discontiguous(psh_meta/3).
 :- dynamic(psh_meta/3).
 
+help/0 ?> 'output available commands'.
 help :-
 	puts('Please note that psh is very incomplete, with no releases or stable interfaces.'), nl,
 	puts('Supported commands: '),
@@ -14,6 +15,7 @@ help :-
 	nl,nl,
 	write('For help with Command, run help(Command).'), nl.
 
+help/1 ?> 'output documentation for all clauses matching X where X = PrincipalFunctor or X = PrincipalFunctor/Arity'.
 help(C) :- atom(C), findall(N-H, (help(C/N,H);psh_meta(C/N,H,_)), H), keysort(H,H0), forall(member(N-M, H0), put_help_msg(C,N,M)).
 help(C/N) :- help(C/N, H), !, put_help_msg(C,N,H).
 help(C/N) :- psh_meta(C/N, H, _), put_help_msg(C,N,H).
