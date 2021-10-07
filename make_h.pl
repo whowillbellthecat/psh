@@ -7,3 +7,8 @@ resolve_clauses/3 ?> 'X and Y are equal length lists and Z is a difference list 
 
 psh_clause_line/3 ?> 'X is a predicate build with psh, Y is the arity, and Z is the line number it was defined on'
   @> psh_clause_line(resolve_clauses,3,_).
+
+clause_head_functor/3 ?> 'X is a psh clause, Y is the head functor of that clause, and Z is the arity of the predicate'
+  @> clause_head_functor((p(_,_), [_,_,_] => _ ), p, 5)
+  @> clause_head_functor((test :- _), test, 0)
+  @> clause_head_functor((t(_) => _), t, 1).
