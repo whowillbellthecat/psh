@@ -15,8 +15,8 @@
 via(X,F,R) :- atom_resolve(F, F0), R <-- fl F0 &= cf(X).
 X via F :- maplist(portray_clause) <-- X via F.
 
-help((edit)/1, 'if X = +F/N, edit the containing file for functor F with arity N in editor').
-help((edit)/1, 'if atom(X), append \'.pl\' and open in editor').
+(edit)/1 ?> 'if X = +F/N, edit the containing file for functor F with arity N in editor'.
+(edit)/1 ?> 'if atom(X), append \'.pl\' and open in editor'.
 
 edit(+P/N) :- psh_clause_line(P,N,L), !, where(P/N,F),
 	psh_build_dir(B),
@@ -27,10 +27,10 @@ edit(+P/N) :- atom(P), where(P/N, F), whichline(P/N,L), ed(L,F).
 edit(-P/N) :- atom(P), where(P/N, F), whichline(P/N,L), ed(L,F).
 edit T => atom_concat(T,'.pl',F), ed F.
 
-help(edit_pshrc/0, 'open pshrc in editor, then consult after editing').
-help(load_pshrc/0, 'reconsult pshrc').
-
+edit_pshrc/0 ?> 'open pshrc in editor, then reconsult after editing'.
 edit_pshrc :- T <- config(pshrc) <> atom_resolve, ed T, consult(T).
+
+load_pshrc/0 ?> 'reconsult pshrc'.
 load_pshrc :- T <- config(pshrc) <> atom_resolve, file_exists(T), consult(T).
 
 prompt(X,Y) :- repeat,print(X),read(Y),nonvar(Y),(Y=end_of_file->halt;true).
