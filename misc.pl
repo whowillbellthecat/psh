@@ -23,7 +23,7 @@ or(P,Q,X) :- call(P,X); call(Q,X).
 P or Q :- call(P) ; call(Q).
 
 % todo: write a helper predicate that defines predicate definition forms (e.g., DCGs, psh-specific, (:-)/2, etc.).
-cf/2 ?> 'true iff the principal functor in the predicate definition Y is X'
+cf/2 ?> 'true iff the principal functor in the predicate definition Y is X, where X = P/N'
   @> cf(t/2, (t(_,_) :- _))
   @> \+ cf(t/3, (t(_,_) :- _))
   @> cf(t/3, (t(_), [_,_] => _)).
