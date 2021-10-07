@@ -58,13 +58,21 @@ spawn_(Comm,Args,'$stream'(In),'$stream'(Out),'$stream'(Err)) :-
 	force_set(2, Err),
 	spawn(Comm, Args).
 
+ied/2 ?> 'Y is a list of terms contained in a temporary file initialized with the contents of the list of terms X after being edited in editor'.
 ied(D,M) :- temporary_file('',psh_,T),open(T,write,S),maplist(portray_clause(S),D),close(S),ed T, open(T,read,S0),
-	readall(S0,M),close(S0),unlink(T),!.
+	readall(S0,M),close(S0),unlink(T).
 
+(ed)/2 ?> 'if X is a number and Y is an atom representing a file path, then open file Y at line X in editor'.
+(ed)/2 ?> 'Y is a list of lines (as codes) containing the result of editing a temporary file initialized with X (a list of lines (as codes))'.
+(ed)/2 ?> 'X is a file path, Y is a list of lines (as codes) containing the result of editing the file at X with editor'.
 ed(C,F) :- number(C), !, atom(F), write_to_atom(A,C), ed_(A,F).
 ed(D,M) :- list(D), !, temporary_file('',psh_,T),open(T,write,S),maplist(println(S),D),close(S),ed T,cat(T,M),unlink(T).
 ed(F), [M] => var(M), cat(F, A), ed(A,M).
+
+(ed)/1 ?> 'edit file given by path X with editor'.
 ed F => config(editor,E), my_spawn(E, [F]).
+
+(ed)/0 ?> 'run editor'.
 (ed) :- config(editor, E), my_spawn(E, []).
 
 ed_(A,F) :- config(editor_line_flag,L), config(editor, E), my_spawn(E,[L,A,F]).
@@ -94,4 +102,6 @@ log :- spawn(git, ['-P',log, '--oneline']).
 less(M) :- list(M),!,popen(less,write,S),maplist(println(S),M),close(S).
 less(M) => spawn(less,[M]).
 
-man(M) :- spawn(man,[M]).
+(man)/1 ?> 'display the man page for X where X is an atom or a pair Section-PageName'.
+man(M) :- atom(M), !, spawn(man,[M]).
+man(Section-Page) :- number(Section), atom(Page), spawn(man,[Section,Page]).
