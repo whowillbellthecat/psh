@@ -26,6 +26,7 @@ config :- forall(configurable(X,_),
 	-> write_to_atom(A,Y), format('~24a ~a~n', [X,A])
 	;  '<unset>' ++ X )).
 
+configurable/2 ?> 'X is a psh configuration option and Y is the option value type'.
 configurable(editor, atom).
 configurable(editor_line_flag, atom).
 configurable(sudo_cmd, atom).
