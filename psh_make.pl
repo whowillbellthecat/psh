@@ -1,6 +1,7 @@
 :- include('op.pl').
 
 :- dynamic(included/1).
+:- dynamic(m_psh_clause_line/3).
 
 build_dir('build').
 build_obj(F,R) :- build_dir(B), atom_concat(B,'/',B0), atom_concat(B0,F,R).
@@ -36,7 +37,7 @@ expand_command_clause((Head => Body), (Head0 :- R)) :-
         Head0 =.. [F|Vars0],
         resolve_clauses(Vars0,Vars,R/Body).
 
-psh_clause_metadata(X, R) :- findall(psh_clause_line(F,N,L), psh_clause_line(F,N,L), D), append(X,D,R).
+psh_clause_metadata(X, R) :- findall(psh_clause_line(F,N,L), m_psh_clause_line(F,N,L), D), append(X,D,R).
 
 psh_clause_defines(X,R) :-
 	(  g_read(psh_clause_line_defined, 0)
@@ -56,7 +57,7 @@ make_readall(S,M) :- read(S,L),
 	;  M = [L|Ls],
 		(  clause_head_functor(L,F,N)
 		-> stream_line_column(S,Line,_),
-		   assertz(psh_clause_line(F, N, Line))
+		   assertz(m_psh_clause_line(F, N, Line))
 		;  true ),
 	  make_readall(S,Ls)).
 
@@ -71,7 +72,7 @@ transform --> psh_clause_defines, export_build_dir, apply_expand(expand_command_
 	apply_expand(expand_type_sig), psh_clause_metadata.
 
 make_transform(InF) :-
-	retractall(psh_clause_line(_,_,_)),
+	retractall(m_psh_clause_line(_,_,_)),
 	build_obj(InF,OutF),
 	open(InF,read,ReadS),
 	make_readall(ReadS, Data),
