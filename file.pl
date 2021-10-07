@@ -25,7 +25,7 @@ file_exists_(F) => file_exists(F).
 prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
 
 % XXX: is it 'correct' that path file doesn't use atom resolve?
-path_file ?> 'Y is the file component of path X'
+path_file/2 ?> 'Y is the file component of path X'
   @> path_file(this/(is)/a/test, test)
   @> path_file(this, this)
   @> path_file(~/test/here, here)
