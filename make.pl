@@ -96,6 +96,7 @@ make_transform :-
 	halt.
 
 init_build_directory :- build_dir(B), catch(make_directory(B), error(system_error('File exists'),make_directory/1), true).
-main :- argument_list([X]), init_build_directory, make_transform(X), halt.
+main_ :- argument_list([X]), init_build_directory, make_transform(X), halt.
+main :- catch(main_, T, (write(T), nl, halt(1))).
 
 :- initialization(main).
