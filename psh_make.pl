@@ -61,6 +61,7 @@ make_readall(S,M) :- read(S,L),
 		;  true ),
 	  make_readall(S,Ls)).
 
+clause_head_functor((F/N ?> _), F, N) :- !.
 clause_head_functor((P :- _), F, N) :- !, functor(P,F,N).
 clause_head_functor(((P, X) => _), F, N) :- !, list(X), length(X,M), functor(P,F,N0), N #= M+N0.
 clause_head_functor((P => _), F, N) :- !, functor(P,F,N).
