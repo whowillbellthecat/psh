@@ -85,18 +85,33 @@ make T :- T == install, !, config(sudo_cmd, S), spawn(S, [make, install]).
 make T :- atom(T), spawn(make, [T]).
 (make) :- spawn(make, []).
 
+commit/0 ?> 'git commit'.
 commit :- spawn(git, [commit]).
+
+status/0 ?> 'git status'.
 status :- spawn(git, [status,'-s']).
-add [X|Xs] :- spawn(git, [add,X|Xs]).
-add X :- atom(X), spawn(git, [add,X]).
-diff [X|Xs] :- spawn(git, ['-P',diff,X|Xs]).
-diff X :- atom(X), spawn(git, ['-P',diff,X]).
+
+(add)/1 ?> 'git add the file represented by path expression X'.
+add X => spawn(git, [add,X]).
+
+(diff)/1 ?> 'git -P diff X, where X is a path expression'.
+diff X => spawn(git, ['-P',diff,X]).
+
+(diff)/0 ?> 'git -P diff'.
 (diff) :- spawn(git, ['-P',diff]).
+
+(push)/0 ?> 'git push'.
 push :- spawn(git, [push]).
 
-log(D,M) :- nonvar(D), atom_concat('--git-dir=',D,T), cmd(git, [T,'-P',log,'--oneline'], M).
-log(D) :- nonvar(D), atom_concat('--git-dir=',D,T), spawn(git,[T,'-P',log,'--oneline']).
+log/2 ?> 'Y is a list of lines (as codes) with the git log for the repository given by path expression X'.
+log(D), [M] => atom_concat('--git-dir=',D,T), cmd(git, [T,'-P',log,'--oneline'], M).
+
+log/1 ?> 'output git log data if X is a path expression'.
+log/1 ?> 'X is a list of lines (as codes) with the git log data for the current directory'.
+log(D) => !, atom_concat('--git-dir=',D,T), spawn(git,[T,'-P',log,'--oneline']).
 log(M) :- var(M),cmd(git,['-P',log,'--oneline'],M).
+
+log/0 ?> 'output git log data for the current directory'.
 log :- spawn(git, ['-P',log, '--oneline']).
 
 less(M) :- list(M),!,popen(less,write,S),maplist(println(S),M),close(S).

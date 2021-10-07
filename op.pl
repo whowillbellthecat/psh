@@ -22,8 +22,8 @@
 :- op(402, fx, ed).
 :- op(100, fx, make).
 :- op(402, fx, file).
-:- op(100, fx, add).
-:- op(100, fx, diff).
+:- op(402, fx, add).
+:- op(402, fx, diff).
 :- op(100, fx, man).
 
 :- op(399,xfy,++).
