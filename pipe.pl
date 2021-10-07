@@ -1,5 +1,8 @@
-$X :- puts <-- g_read(X).
+($)/2 ?> 'Y is the value stored in gprolog global variable designated by X'.
 $(X,Y) :- g_read(X,Y).
+
+($)/1 ?> 'output the value stored in gprolog global variable designated by X'.
+$X :- puts <-- g_read(X).
 
 X <- P :- var(X), !, call(P,X).
 X <- P :- atom(X), call(P,Y), g_assign(X,Y).
