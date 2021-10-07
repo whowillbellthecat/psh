@@ -3,16 +3,32 @@
 :- psh_include(list).
 :- psh_include(io).
 
+(~/)/2 ?> 'R is an atom representing the path X prefixed with the value of the environment variable HOME'.
 ~/(X), [R] => environ('HOME',H), atom_join([H,X],'/',R).
+(~/)/1 ?> 'output an atom representing the path expression ~/X'.
 ~/X :- ~/X <> (=).
 
+(//)/2 ?> 'R is an atom representing the path expression //X'
+  @> //(test/path,'/test/path')
+  @> //(t,'/t')
+  @> //('', '/').
 //(X), [R] => atom_concat('/', X, R).
+(//)/1 ?> 'output an atom represting the path expression //X'.
 //X :- //X <> (=).
 
+(/)/3 ?> 'R is an atom representing the path expression X/Y'
+  @> /(test,here,'test/here')
+  @> /(test dot t, l dot pdf, 'test.t/l.pdf')
+  @> /(test,test/here,'test/test/here').
 /(X,Y), [R] => atom_join([X,Y],'/',R).
+
+(/)/2 ?> 'output an atom representing the path expression X/Y'.
 X/Y :- X/Y <> (=).
 
+(://)/3 ?> 'R is an atom representing the path expression X :// Y'
+  @> ://(http, example dot com, 'http://example.com').
 ://(X,Y), [R] => atom_join([X,Y],'://',R).
+(://)/2 ?> 'output an atom representing the path expression X :// Y'.
 X://Y :- X://Y <> (=).
 
 hidden_file_path(P) :- atom_concat('.',_,P).
@@ -22,7 +38,7 @@ directory/1 ?> 'X is a directory'.
 directory(D) => file_property(D,type(directory)).
 
 file_exists_(F) => file_exists(F).
-prefix(X,Y,R) :- atom_join([X,Y],'/',R), !. % is this the correct place for cut?
+prefix(X,Y,R) :- atom_join([X,Y],'/',R).
 
 % XXX: is it 'correct' that path file doesn't use atom resolve?
 path_file/2 ?> 'Y is the file component of path X'
