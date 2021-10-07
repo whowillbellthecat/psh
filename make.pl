@@ -62,7 +62,7 @@ readall(S,M) :- read(S,L),
 	  readall(S,Ls)).
 
 clause_head_functor((P :- _), F, N) :- !, functor(P,F,N).
-clause_head_functor(((P, _) => _), F, N) :- !, functor(P,F,N).
+clause_head_functor(((P, X) => _), F, N) :- !, list(X), length(X,M), functor(P,F,N0), N #= M+N0.
 clause_head_functor((P => _), F, N) :- !, functor(P,F,N).
 clause_head_functor(((P, _) --> _), F, N) :- !, functor(P,F,N).
 clause_head_functor((P --> _), F, N) :- !, functor(P,F,N).
