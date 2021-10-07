@@ -17,7 +17,7 @@ config(pshrc,~/'.pshrc').
 config(sudo_cmd, X) :- environ('SUDO', X).
 config(sudo_cmd, doas) :- \+ environ('SUDO',_).
 
-config/1 ?> 'output value of configurable XX'.
+config/1 ?> 'output value of configurable X'.
 config(X) :- config(X,Y), write(Y), nl.
 
 config/0 ?> 'output current configuration'.
