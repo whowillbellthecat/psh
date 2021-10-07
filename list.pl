@@ -57,6 +57,7 @@ limit(X) :- limit(10,X).
 takeWhile(P,[X|Xs],[X|Ys]) :- call(P,X), takeWhile(P,Xs,Ys).
 takeWhile(P,[X|_],[]) :- \+ call(P,X).
 
+zip/3 ?> 'Z is a list of pairs formed by joining lists X and Y pairwise with the functor (-)/2'.
 zip([X|Xs],[Y|Ys], [X-Y|Zs]) :- zip(Xs,Ys,Zs).
 zip([],[],[]).
 
