@@ -12,3 +12,5 @@ clause_head_functor/3 ?> 'X is a psh clause, Y is the head functor of that claus
   @> clause_head_functor((p(_,_), [_,_,_] => _ ), p, 5)
   @> clause_head_functor((test :- _), test, 0)
   @> clause_head_functor((t(_) => _), t, 1).
+
+init_build_directory/0 ?> 'create build_dir if it does not already exist'.
