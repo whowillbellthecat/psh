@@ -9,6 +9,8 @@
 :- psh_include(tty).
 :- psh_include(test).
 :- psh_include(shell).
+:- psh_include(make_h).
+:- psh_include(psh_make).
 
 via(X,F,R) :- atom_resolve(F, F0), R <-- fl F0 &= cf(X).
 X via F :- maplist(portray_clause) <-- X via F.
