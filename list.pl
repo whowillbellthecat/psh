@@ -45,13 +45,26 @@ atom_join/3 ?> 'R is the atom formed by joining the list of atoms X with atom C'
 atom_join([X],_,X).
 atom_join([X|Xs],C,R) :- atom_join(Xs,C,Rs),atom_concat(X,C,R0),atom_concat(R0,Rs,R).
 
+limit/3 ?> 'Y is a list with up to the first (or last if negative) X entries of the list X'
+  @> limit(1,[x],[x])
+  @> limit(5, [a,b,c,d,e,f], [a,b,c,d,e])
+  @> limit(-1, [a,b,c,d], [d])
+  @> limit(0,[],[])
+  @> limit(0,[x],[])
+  @> limit(1,[],[]).
+
 limit(C,X,Y) :- C < 0, reverse(X,X0), C0 is abs(C), limit(C0,X0,Y).
 limit(C,[X|Xs],[X|Y]) :- C > 0, C0 is C-1, limit(C0,Xs,Y).
 limit(0,_,[]).
 limit(_,[],[]).
+
+limit/2 ?> 'output up to the first (or last if negative) X items of list Y'.
+limit/2 ?> 'Y is a list with up to the first 10 items of list X'.
 limit(C,X) :- \+ list(C), limit(C,X,Y), maplist(puts,Y).
 limit(X,Y) :- var(Y), limit(10,X,Y).
 limit(X,Y) :- list(X), limit(10,X,Y).
+
+limit/1 ?> 'output up to the first 10 items of list X'.
 limit(X) :- limit(10,X).
 
 takeWhile(P,[X|Xs],[X|Ys]) :- call(P,X), takeWhile(P,Xs,Ys).
