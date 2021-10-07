@@ -33,6 +33,9 @@ gcc are build dependencies (other C compilers may work, but gplc appears to outp
 is used). Some psh commands assume other runtime dependencies (e.g., less/1 assumes less is installed),
 but these predicates can fail without affecting the functioning of the larger system.
 
+Some configuration may be necessary for setting the text editor (checks VISUAL, EDITOR, then tries vi),
+sudo command (defaults to doas), etc.  Use config/0 to see the configuration and set/2 to change a value.
+
 The build process will first build make.pl, which will then expand psh specific constructs in the psh
 source. The expanded prolog files are named build/*.pl and subsequently compiled with gplc (which will
 call CC to compile os.c). The syntax of the psh source code requires make.pl to expand them. Currently,
@@ -41,7 +44,7 @@ code loaded into psh must be valid prolog and thus cannot use these constructs.
 Psh itself also implements operators using op/3, which can be used in code loaded into psh (e.g., via
 consult, [user], etc.). The op/3 directives are in op.pl so that they can be included separately.
 
-The predicate help/0 will output a (small) subset of implemented predicates. Psh predicates intended for
+The predicate help/0 will output the documented subset of implemented predicates. Psh predicates intended for
 use at the psh top level are highly modal. In particular, if a predicate p/(n+1) has an 'output' variable,
 it is generally the last variable, and p/n will generally output to the terminal.
 
@@ -70,75 +73,6 @@ The underlying predicate that accomplishes this is atom_resolve/2. In psh source
 That is to say that occurrences of (=>) in the psh source indicate expressions which take path expressions as input (the
 list following the predicate in the head of the clause, mirroring DCG semi-context notation, indicates a list of variables
 of the head functor which should not be affected by the aforementioned transformation).
-
---
-
-Many routines, such as cd/pwd/ed/file are set as unary operators and need to
-be surrounded in parenthesis for them to be used as atoms. Some notable routines include:
-
-ed filename.       % edit filename in EDITOR (default: vi)
-ied(data,O)        % edit data as list of prolog clauses in EDITOR then read/2 into O.
-fl.                % list files ending in .pl
-fl +f/n.           % display code from the source file for functor f with arity n
-fl filename.       % show the source of filename.pl using portray_clause
-edit filename.     % edit filename.pl in EDITOR
-edit +f/n.         % edit the source file for functor f with arity n in EDITOR
-                   %    ( for editors other than vi, add config(editor_line_flag,FLAG) to pshrc to support jumping to the
-                   %      the line number a predicate is defined on).
-cd dir.            % change directory to dir
-pwd.               % working directory
-ls.                % list files not starting with '.'
-less(list).        % display list of codes in `less`
-find(p).           % find files 1 level deep satisfying predicate p/1
-find(p,depth).     % find files upto depth satisfying predicate p/1
-find(p,depth,dir). % find files upto depth satisfying predicate p/1 in dir
-filter(p,dom,sat). % sat is a list containing solutions of p constrained to domain dom
-endswith(str,x).   % x ends with str
-startswith(str,x). % x starts with str
-limit(list).       % output first 10 items in list
-limit(c,list).     % output first c items in list (or last c items if negative).
-pred via filename. % display the source for predicate pred as defined in filename
-where p/n.         % display the path to the file that defines predicate p with arity n
-cat filename.      % this is badly named -- it only outputs filename and doesn't concatenate; sorry not sorry
-cat F.             % read from stdin into variable F
-cat(filename,M).   % read filename into variable M (as a list of codes).
-println(S,codes).  % print codes to stream S
-println(codes).    % print codes to stdout
-puts(S,msg).       % put msg to stream S (in internal encoding)
-puts(msg).         % put msg to stdout (in internal encoding)
-make.              % run `make`
-make install.      % run `doas make install` (to use a program other than doas set SUDO)
-make target.       % run `make target`
-log.               % git -P log --oneline
-add filename.      % git add filename
-status.            % git status -s
-commit             % git commit
-diff.              % git -P diff
-diff whatever.     % git -P diff whatever
-file somefile.     % run `file somefile`
-clear.             % clear screen
-
-rot(P,X,Y,Z).       % call(P,Z,X,Y). n.b. this is backwards w.r.t. forth
-swap(P,X,Y).        % call(P,Y,X).
-dup(P,X,X).         % call(P,X).
-drop(P,X).          % call(P,X,_).
-zip(Xs,Ys,Zs).      % Zs is a list of `X-Y' pairs for X in Xs and Y in Ys
-zipWith(P,Xs,Ys,Zs) % Zs = [ Z | call(P,X,Y,Z), X <- Xs, Y <- Yz ].
-takeWhile(P,Xs,Ys)  % take elements from Xs until P fails
-
-group(X,G). % indices of elements of X partitioned according to X/= and sorted according to the term ordering on X
-groupby(ListX,ListY,R). % partition X according to Y/=
-groupby(Pred,X,R).      % call(Pred,X,X0), and group X according to X0/=
-order(X,R). % R is a (origin 1) permutation vector which will sort the list X if applied to it
-R <- A@B    % R is A indexed by (origin 1) list of indices B
-
-
-Additional operators are defined for convenience:
-        p &= q             % defined as `p <> filter(q).'
-        p <> q each        % each modifies q(X,Y) to act instead as maplist(q,X,Y)
-        p <> q with l each % if l is a list of items l0,..,ln, `with' generates a list of closures
-                           % Q = q(l0),..,q(ln) which `each' modifies to act as maplist(call,Q,X,Y).
-        p && q             % &&/3 calls both p and q on the third argument, &&/2 just calls p and q.
 
 Examples:
 --
