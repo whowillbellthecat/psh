@@ -78,7 +78,10 @@ ed F => config(editor,E), my_spawn(E, [F]).
 ed_(A,F) :- config(editor_line_flag,L), config(editor, E), my_spawn(E,[L,A,F]).
 ed_(_,F) :- ed F.
 
+(file)/2 ?> 'R is an atom containing the file type given by file(1) for the file given by the path expression X'.
 file(X), [M] => cmd(file,[X],M0), atom_codes(M,M0).
+
+(file)/1 ?> 'run file(1) on the file given by the path expression X'.
 file(X) => spawn(file, [X]).
 
 make T :- T == install, !, config(sudo_cmd, S), spawn(S, [make, install]).
