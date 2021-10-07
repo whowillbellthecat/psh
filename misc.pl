@@ -25,11 +25,9 @@ P or Q :- call(P) ; call(Q).
 % todo: write a helper predicate that defines predicate definition forms (e.g., DCGs, psh-specific, (:-)/2, etc.).
 cf/2 ?> 'true iff the principal functor in the predicate definition Y is X'
   @> cf(t/2, (t(_,_) :- _))
-  @> \+ cf(t/3, (t(_,_) :- _)).
-cf(H/N,(H0:-_)) :- functor(H0,H,N), !.
-cf(H/N,(H0=>_)) :- functor(H0,H,N), !.
-cf(H,(H0:-_)) :- atom(H),functor(H0,H,_), !.
-cf(H,(H0=>_)) :- atom(H),functor(H0,H,_).
+  @> \+ cf(t/3, (t(_,_) :- _))
+  @> cf(t/3, (t(_), [_,_] => _)).
+cf(H/N, Clause) :- clause_head_functor(Clause,H,N).
 
 (\+)/2 ?> 'defined such that call((\\+ p), Y) is intepreted as \\+ p(Y)'
   @> \+(length([a,b,c]), 4).
