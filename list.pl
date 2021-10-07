@@ -106,7 +106,15 @@ merge_every(_,[],[],[]).
 
 append_with(C, X, Y, R) :- append(X,[C|Y], R).
 
-% pad list to length N with C; fail if the length of the list is less than N
+% FIXME: pad(t,_,_,_) crashes
+pad/4 ?> 'R is a list containing all elements of Z padded to length Y by item X. Fails if length of Z is more than Y'
+  @> pad(t,3,[],[t,t,t])
+  @> \+ pad("test",1,[t,t,t],_)
+  @> pad("test",4,[t,t,t],[t,t,t,"test"])
+  @> \+ pad(abc,0,[t],[])
+  @> pad(abc,0,[],[])
+  @> pad(1,2,[],[1,1])
+  @> \+ pad(_,-1,_,_).
 pad(C,N,[X|Xs],[X|R]) :- N #> 0, N0 #= N-1, pad(C,N0,Xs,R).
 pad(C,N,[],[C|R]) :- N #> 0, N0 #= N-1, pad(C,N0,[],R).
 pad(_,0,[],[]).
