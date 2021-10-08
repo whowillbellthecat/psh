@@ -67,6 +67,11 @@ limit(X,Y) :- list(X), limit(10,X,Y).
 limit/1 ?> 'output up to the first 10 items of list X'.
 limit(X) :- limit(10,X).
 
+% should takeWhile(_,[],[]) fail?
+takeWhile/3 ?> 'Z contains successive elements of Y for which unary predicate/closure P holds'
+  @> takeWhile(atom,[a,b,c,1,d,e],[a,b,c])
+  @> takeWhile(atom,[1,a,2,b,3,c],[])
+  @> takeWhile(\+,[false,false,true,false], [false,false]).
 takeWhile(P,[X|Xs],[X|Ys]) :- call(P,X), takeWhile(P,Xs,Ys).
 takeWhile(P,[X|_],[]) :- \+ call(P,X).
 
