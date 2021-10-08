@@ -45,7 +45,7 @@ start :- start('$ ').
 main :- pass_sigint, argument_list(X), handle_arguments(X).
 
 handle_arguments(['-r']) :- !, start.
-handle_arguments(['-c',C]) :- !, ( once(C) ; true ), halt.
+handle_arguments(['-c',C]) :- !, (read_from_atom(C, P), once(P) ; halt(1) ), halt.
 handle_arguments([]) :- !, ( readline_hack ; true ), start.
 handle_arguments([X]) :- !, consult(X), start.
 handle_arguments(_) :- write('Error: unknown mode of operation'), nl, halt.
