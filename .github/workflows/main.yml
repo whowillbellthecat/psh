@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: install gplc
-        run: sudo apt-get -y gprolog
+        run: sudo apt-get -y install gprolog
       - name: install gcc
-        run: sudo apt-get -y gcc
+        run: sudo apt-get -y install gcc
       - name: build psh and run unit tests
         run: make check
