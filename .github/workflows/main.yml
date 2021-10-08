@@ -1,0 +1,19 @@
+name: build and run unit test
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  test_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install gplc
+        run: sudo apt-get -y gprolog
+      - name: install gcc
+        run: sudo apt-get -y gcc
+      - name: build psh and run unit tests
+        run: make check
