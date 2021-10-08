@@ -90,7 +90,15 @@ order(X,Y) :- Y <- swap(zip(_)) <-- keysort <-- zip(X) <-- fd_dom <-- length(X) 
 sortby(X,Y,Z) :- list(X), order(X,G), Z <- Y@G.
 sortby(P,X,Y) :- callable(P), maplist(P,X,X0), order(X0,G), Y <- X@G.
 
+group/2 ?> 'Y is a list of lists of indexes of the items of list X grouped by term equality (in sorted order)'
+  @> group([1,2,3,1],[[1,4],[2],[3]])
+  @> group([x,a,b,x],[[2],[3],[1,4]])
+  @> group([a],[[1]])
+  @> group(["test","me","test"],[[2],[1,3]])
+  @> \+ group([_,_,_,_,_], _).
+
 group(X,Y):-S<-sort(X),M<-msort(X),length(S,A),repeat([],A,I),N<-order(X),group(S,M,N,I,Y).
+
 group([X|Xs],[X|Ys],[N|Ns],[I|Is],Zs) :- group([X|Xs],Ys,Ns,[[N|I]|Is],Zs).
 group([X|Xs],[Y|Ys],[N|Ns],[I|Is],[I0|Zs]) :- X \= Y, reverse(I,I0), group(Xs,[Y|Ys],[N|Ns],Is,Zs).
 group([_],[],[],[X],[Y]) :- reverse(X,Y).
