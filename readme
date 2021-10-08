@@ -33,8 +33,8 @@ gcc are build dependencies (other C compilers may work, but gplc appears to outp
 is used). Some psh commands assume other runtime dependencies (e.g., less/1 assumes less is installed),
 but these predicates can fail without affecting the functioning of the larger system.
 
-Some configuration may be necessary for setting the text editor (checks VISUAL, EDITOR, then tries vi),
-sudo command (defaults to doas), etc.  Use config/0 to see the configuration and set/2 to change a value.
+Some configuration may be necessary for setting the text editor (checks VISUAL, EDITOR, then tries vi), sudo
+command (checks SUDO, then tries doas), etc.  Use config/0 to see the configuration and set/2 to change a value.
 
 The build process will first build make.pl, which will then expand psh specific constructs in the psh
 source. The expanded prolog files are named build/*.pl and subsequently compiled with gplc (which will
@@ -57,9 +57,9 @@ when using (<>). This can be corrected by using (<--) instead. These operators a
 use can be made more convenient with the combinatorial predicates (dup, rot, swap, etc) which resemble their forth
 counterparts.
 
-Currently, psh will resolve predicates to atoms in some cases. This faulty enables inputing structural path expressions
-(non-atomic) path expressions. Due to the current mechanism, any functor f/n with an associated predicate f/n+1 where n>0
-can be used in path expressions, but this is liable to change. The principal constructors are:
+Currently, psh will resolve predicates to atoms in some cases. This faculty enables inputing structural path expressions
+Due to the current mechanism, any functor f/n with an associated predicate f/n+1 where n>0 can be used in path expressions,
+but this is liable to change. The principal constructors are:
 	(//X)		relative path -> root-prefixed absolute path
 	(~/X)		relative path -> user-home-prefixed absolute path
 	(X/Y)		path -> file component -> path
