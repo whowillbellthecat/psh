@@ -4,6 +4,8 @@ $(X,Y) :- g_read(X,Y).
 ($)/1 ?> 'output the value stored in gprolog global variable designated by X'.
 $X :- puts <-- g_read(X).
 
+(<-)/2 ?> 'X is a variable and Y is a unary predicate for which call(Y,X) holds'.
+(<-)/2 ?> 'assign Var in call(Y,Var) to a global gprolog variable identified by the atom X'.
 X <- P :- var(X), !, call(P,X).
 X <- P :- atom(X), call(P,Y), g_assign(X,Y).
 
