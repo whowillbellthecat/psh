@@ -13,7 +13,7 @@ help :-
 
 help/1 ?> 'output documentation for all clauses matching X where X = PrincipalFunctor or X = PrincipalFunctor/Arity'.
 help(C) :- atom(C), !, findall(N-H, psh_meta(C/N,H,_), H), keysort(H,H0), forall(member(N-M, H0), put_help_msg(C,N,M)).
-help(C/N) :- psh_meta(C/N, H, _), put_help_msg(C,N,H).
+help(C/N) :- forall(psh_meta(C/N, H, _), put_help_msg(C,N,H)).
 
 put_help_msg(C,N,M) :- puts(C/N), write('\t'), puts(M), put_source_code(C/N).
 
