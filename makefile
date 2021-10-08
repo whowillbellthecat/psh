@@ -19,4 +19,4 @@ install: psh
 	$(INSTALL) -csm 0755 psh "$(BIN)"
 
 check: psh
-	psh -c do_tests.
+	./psh -c do_tests.
