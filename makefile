@@ -18,5 +18,8 @@ clean:
 install: psh
 	$(INSTALL) -csm 0755 psh "$(BIN)"
 
+install_dict: psh_jargon
+	$(INSTALL) -cm 0444 psh_jargon "$(PREFIX)/share/dict"
+
 check: psh
 	./psh -c do_tests.
