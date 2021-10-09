@@ -69,18 +69,29 @@ get_discard(S) :- repeat, get_byte(S,-1).
 
 % todo: implement a columnize/3 that takes tty size and is easier to test
 % todo: implement a columnize/1 that prints to tty
-columnize/2 ?> 'R is a list of lists codes containing lines filled with the spaced elements of X arranged into columns'
-  @> columnize([],[[]]).
 
-columnize([],[[]]).
-columnize([X|Xs],Out) :-
-	tty_dim(W,_),
-        T <- max_list <-- maplist(atom_length,[X|Xs]),
-        C #= W // (T + 1),
-        maplist(atom_codes,[X|Xs],X0),
-        maplist(pad(32,T),X0,R0),  % is this right? or should it be pad to the longest item in each row?
-        merge_every(C, R0, R),
-        maplist(fold(append_with(32)), R, Out).
+columnize/3 ?> 'Y is a list of lines (as codes) of length Z-1, each containing elements of X (list of atoms) arranged neatly into columns'
+  @> columnize([this,is,a,test],["this","is  ","a   ","test"],5)
+  @> columnize([this,is,another,test,here],["this    is     ", "another test   ", "here   "] ,20)
+  @> \+ columnize([t],_,0)
+  @> columnize([t],[[116]],400).
+
+columnize([],[[]],_).
+columnize([X|Xs],Out,Width) :-
+	T <- max_list <-- maplist(atom_length,[X|Xs]),
+	Width #> T,
+	Cols #= Width // (T + 1),
+	maplist(atom_codes,[X|Xs],X0),
+	maplist(pad(32,T),X0,R0), % should this pad only to the longest item in each col?
+	merge_every(Cols, R0, R),
+	maplist(fold(append_with(32)), R, Out).
+
+columnize/2 ?> 'Y is a list of lines (as codes) each containing elements of X (list of atoms) arranged neatly into columns'
+  @> columnize([],[[]]).
+columnize(X,R) :- tty_dim(Width,_), columnize(X,R,Width).
+
+columnize/1 ?> 'Output the items of X (list of atoms) arranged neatly into columns'.
+columnize(X) :- maplist(println) <-- columnize(X).
 
 (cd)/1 ?> 'change the current working directory to X'.
 cd X => change_directory(X). 
