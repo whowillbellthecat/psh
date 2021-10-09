@@ -29,6 +29,6 @@ cf/2 ?> 'true iff the principal functor in the predicate definition Y is X, wher
   @> cf(t/3, (t(_), [_,_] => _)).
 cf(H/N, Clause) :- clause_head_functor(Clause,H,N).
 
-(\+)/2 ?> 'defined such that call((\\+ p), Y) is intepreted as \\+ p(Y)'
+(\+)/2 ?> 'defined such that call((\\+ p), Y) is interpreted as \\+ p(Y)'
   @> \+(length([a,b,c]), 4).
 \+(X,Y) :- \+ call(X,Y).
