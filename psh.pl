@@ -1,6 +1,6 @@
 :- psh_include(op).
-:- psh_include(os).
 :- psh_include(help).
+:- psh_include(os).
 :- psh_include(comb).
 :- psh_include((file)).
 :- psh_include(external).

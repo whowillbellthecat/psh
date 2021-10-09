@@ -11,3 +11,5 @@
 :- foreign(pwait(+positive, -atom, -positive)).
 
 tcsetpgrp(X,Y) :- pl_tcsetpgrp(X,Y).
+
+tty_dim/2 ?> 'X and Y are the width and height of the tty' @> tty_dim(_,_).

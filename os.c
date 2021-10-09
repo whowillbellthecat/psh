@@ -57,7 +57,7 @@ PlBool dir_file(char *dir, PlLong *file) {
 PlBool tty_dim(PlLong *width, PlLong *height) {
         struct winsize ws;
         if (ioctl(0, TIOCGWINSZ, &ws) != 0)
-		return PL_FALSE; // todo: throw
+		 Pl_Err_System(Pl_Create_Atom("could not get terminal size"));
 	*width = ws.ws_col;
 	*height = ws.ws_row;
         return PL_TRUE;
