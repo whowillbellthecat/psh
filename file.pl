@@ -87,7 +87,7 @@ columnize([X|Xs],Out,Width) :-
 	maplist(fold(append_with(32)), R, Out).
 
 columnize/2 ?> 'Y is a list of lines (as codes) each containing elements of X (list of atoms) arranged neatly into columns'
-  @> columnize([],[[]]).
+  @> isatty -> columnize([],[[]]) ; true.
 columnize(X,R) :- tty_dim(Width,_), columnize(X,R,Width).
 
 columnize/1 ?> 'Output the items of X (list of atoms) arranged neatly into columns'.
