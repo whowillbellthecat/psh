@@ -48,6 +48,7 @@ path_file/2 ?> 'Y is the file component of path X'
   @> path_file(//t/e/f, f)
   @> path_file(//t, t).
 
+path_file(X,_) :- var(X), throw(error(instantiation_error,path_file/2)).
 path_file(X/Y,Y) :- !.
 path_file(X,Y) :- atom(X), !, X == Y.
 path_file(//X, X) :- !.
