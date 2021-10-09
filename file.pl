@@ -66,10 +66,6 @@ copy_file_(F0,F1) =>
 	get_discard(Source), close(Source), close(Sink).
 get_discard(S) :- repeat, get_byte(S,-1).
 
-
-% todo: implement a columnize/3 that takes tty size and is easier to test
-% todo: implement a columnize/1 that prints to tty
-
 columnize/3 ?> 'Y is a list of lines (as codes) of length Z-1, each containing elements of X (list of atoms) arranged neatly into columns'
   @> columnize([this,is,a,test],["this","is  ","a   ","test"],5)
   @> columnize([this,is,another,test,here],["this    is     ", "another test   ", "here   "] ,20)
@@ -92,6 +88,12 @@ columnize(X,R) :- tty_dim(Width,_), columnize(X,R,Width).
 
 columnize/1 ?> 'Output the items of X (list of atoms) arranged neatly into columns'.
 columnize(X) :- maplist(println) <-- columnize(X).
+
+columnize_if_tty/2 ?> 'if user_output is a tty, same as columnize(X,Y), otherwise atom_codes(X,Y)'.
+columnize_if_tty(X,Y) :- isatty(user_output) -> columnize(X,Y) ; atom_codes(X,Y).
+
+columnize_if_tty/1 ?> 'output X (list of atoms); if user_output is a tty, arrange it neatly into columns first'.
+columnize_if_tty(X) :- maplist(println) <-- columnize_if_tty(X).
 
 (cd)/1 ?> 'change the current working directory to X'.
 cd X => change_directory(X). 
