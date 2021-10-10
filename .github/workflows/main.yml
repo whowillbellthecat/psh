@@ -17,5 +17,3 @@ jobs:
         run: sudo apt-get -y install gcc
       - name: build psh and run unit tests
         run: make check
-      - name: test a psh command
-        run: ./psh -c 'ls.'
