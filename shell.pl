@@ -17,5 +17,5 @@ files(X), [R] => dir_file(X,R).
 
 ls(D), [F] => directory_files(D,T), exclude(hidden_file_path,T,F).
 ls O :- var(O), !, ls('.',O).
-ls D :- nonvar(D),ls(D,F),columnize(F,R),maplist(println,R).
+ls D :- nonvar(D), columnize_if_tty <-- ls(D).
 (ls) :- ls '.'.
