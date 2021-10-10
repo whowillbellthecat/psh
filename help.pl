@@ -7,7 +7,7 @@ help :-
 	puts('Please note that psh is very incomplete, with no releases or stable interfaces.'), nl,
 	puts('Supported commands: '),
 	findall(C/N,psh_meta(C/N,_,_), X),
-	maplist(println) <-- columnize <-- sort <-- maplist(swap(write_to_atom),X),
+	columnize_if_tty <-- sort <-- maplist(swap(write_to_atom),X),
 	nl,nl,
 	write('For help with Command, run help(Command).'), nl.
 
