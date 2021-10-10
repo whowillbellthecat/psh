@@ -12,9 +12,9 @@ files(X), [R] => dir_file(X,R).
 
 (ls)/2 ?> 'R is a list of atoms containing the names of files in the directory X'.
 (ls)/1 ?> 'R is a list of atoms containing the names of flies in the current directory'.
-(ls)/1 ?> 'output files in the directory X'
-  @> cmd('./psh',['-c','ls.'],"",T), T0 <- cmd(ls,[],"") &= \+(append(".",_)), sort(T), sort(T0),
-    (T == T0 ; throw(error(test((ls)/1), T == T0))).
+(ls)/1 ?> 'output files in the directory X'.
+% @> cmd('./psh',['-c','ls.'],"",T), T0 <- cmd(ls,[],"") &= \+(append(".",_)), sort(T), sort(T0),
+%    (T == T0 ; throw(error(test((ls)/1), T == T0))).
 
 (ls)/0 ?> 'output files in the current directory'.
 
