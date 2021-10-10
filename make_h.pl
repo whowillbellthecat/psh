@@ -14,3 +14,6 @@ clause_head_functor/3 ?> 'X is a psh clause, Y is the head functor of that claus
   @> clause_head_functor((t(_) => _), t, 1).
 
 init_build_directory/0 ?> 'create build_dir if it does not already exist'.
+
+psh_commit/1 ?> 'X is the git commit hash of HEAD at the time psh was build'.
+%  @> psh_commit(A), cmd(git,['rev-parse','HEAD'],read,[X]), atom_codes(A,X).

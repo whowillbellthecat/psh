@@ -4,9 +4,11 @@ BIN=$(DESTDIR)$(PREFIX)/bin
 INSTALL=install
 CC=gcc
 
+COMMIT=`git rev-parse HEAD`
+
 psh: *.pl os.c
 	gplc --no-top-level make.pl
-	./make psh.pl
+	./make -c "$(COMMIT)" psh.pl
 	gplc --c-compiler "$(CC)" build/psh.pl os.c
 	mv -f build/psh psh
 

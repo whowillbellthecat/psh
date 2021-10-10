@@ -2,6 +2,7 @@
 
 :- dynamic(included/1).
 :- dynamic(m_psh_clause_line/3).
+:- dynamic(m_psh_commit/1).
 
 build_dir('build').
 build_obj(F,R) :- build_dir(B), atom_concat(B,'/',B0), atom_concat(B0,F,R).
@@ -51,6 +52,12 @@ export_build_dir(X,R) :- build_dir(B),
 	   g_assign(exported_build_dir, 1)
 	;  R = X ).
 
+prepend_psh_version(X,R) :-
+	(  g_read(psh_version_prepended, 0)
+	-> m_psh_commit(C), R = [psh_commit(C)|X],
+	   g_assign(psh_version_prepended,1)
+	;  R = X ).
+
 make_readall(S,M) :- read(S,L),
 	(  L = end_of_file
 	-> M = []
@@ -69,8 +76,14 @@ clause_head_functor(((P, _) --> _), F, N) :- !, functor(P,F,N).
 clause_head_functor((P --> _), F, N) :- !, functor(P,F,N).
 clause_head_functor(P, F, N) :- functor(P,F,N), F \= (:-).
 
-transform --> psh_clause_defines, export_build_dir, apply_expand(expand_command_clause), apply_expand(expand_psh_include), 
-	apply_expand(expand_type_sig), psh_clause_metadata.
+transform -->
+	prepend_psh_version,
+	psh_clause_defines,
+	export_build_dir,
+	apply_expand(expand_command_clause),
+	apply_expand(expand_psh_include),
+	apply_expand(expand_type_sig),
+	psh_clause_metadata.
 
 make_transform(InF) :-
 	retractall(m_psh_clause_line(_,_,_)),
