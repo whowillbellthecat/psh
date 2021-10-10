@@ -90,7 +90,7 @@ columnize/1 ?> 'Output the items of X (list of atoms) arranged neatly into colum
 columnize(X) :- maplist(println) <-- columnize(X).
 
 columnize_if_tty/2 ?> 'if user_output is a tty, same as columnize(X,Y), otherwise atom_codes(X,Y)'.
-columnize_if_tty(X,Y) :- isatty(user_output) -> columnize(X,Y) ; atom_codes(X,Y).
+columnize_if_tty(X,Y) :- isatty(user_output) -> columnize(X,Y) ; maplist(atom_codes,X,Y).
 
 columnize_if_tty/1 ?> 'output X (list of atoms); if user_output is a tty, arrange it neatly into columns first'.
 columnize_if_tty(X) :- maplist(println) <-- columnize_if_tty(X).
