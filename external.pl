@@ -34,9 +34,13 @@ fg/0 ?> 'resume last process in foreground'.
 fg :- psh_job_record(stopped,T), !, fg(T).
 fg :- puts('No matching job').
 
-cmd(Comm,Args,read,Output) :- spawn(Comm,Args,InW,OutR,ErrR), close(InW), close(ErrR), slurp(OutR, Output), close(OutR).
+cmd/4 ?> 'X (atom) is a command, Y (list of atoms) its arguments, Z is either read or write, and R (list of codes) is read or written from the process based on Z'.
+  %@> cmd(echo,[test],read,["test"]).
+cmd(Comm,Args,read,Output) :- spawn(Comm,Args,InW,OutR,ErrR),close(ErrR),close(InW),slurp(OutR, Output),close(OutR).
 cmd(Comm,Args,write,Input) :- spawn(Comm,Args,InW,OutR,ErrR), close(ErrR), maplist(println(InW), Input), close(InW), close(OutR).
 
+cmd/5 ?> 'X (atom) is a command, Y (list of atoms) its arguments, Z is read/write, R0 (list of codes) is input to the command, and R1 (list of codes) output of the command'.
+  %@> cmd(cat,[],read/write,["test","here"],["test","here"]).
 cmd(Comm,Args,read/write,Input,Output) :-
 	spawn(Comm,Args,InW,OutR,ErrR),
 	close(ErrR),
@@ -45,11 +49,13 @@ cmd(Comm,Args,read/write,Input,Output) :-
         slurp(OutR, Output),
 	close(OutR).
 
+interactive_cmd/3 ?> 'X (atom) is a command, Y (list of atoms) its arguments, and Z (list of codes) the output of the command. The command is not disconnected from user_input or user_error'.
 interactive_cmd(Comm,Args,Output) :- create_pipe(OutR,OutW), fork_prolog(N),
 	(  N == 0
 	-> ( close(OutR), spawn_(Comm,Args,'$stream'(0),OutW,'$stream'(2)), halt ; halt )
 	;  close(OutW), slurp(OutR, Output), close(OutR) ).
 
+spawn/5 ?> 'X (atom) is a command, Y (list of atoms) its arguments, R0, R1, and R2 are variables which are unified with pipes to write stdin, read stdout, and read stderr (respectively)'.
 spawn(Comm, Args, InW, OutR, ErrR) :-
 	create_pipe(InR, InW), create_pipe(OutR,OutW), create_pipe(ErrR,ErrW),
 	fork_prolog(N),
@@ -57,7 +63,7 @@ spawn(Comm, Args, InW, OutR, ErrR) :-
 	-> ( close(InW), close(OutR), close(ErrR),
 	     spawn_(Comm, Args, InR, OutW, ErrW),
 	     halt ; halt )
-	;   close(InR), close(OutW), close(ErrW) ).
+	;   close(InR), close(OutW), close(ErrW)).
 
 spawn_(Comm,Args,'$stream'(In),'$stream'(Out),'$stream'(Err)) :-
 	force_set(0, In),
