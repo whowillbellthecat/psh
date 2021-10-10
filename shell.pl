@@ -13,7 +13,7 @@ files(X), [R] => dir_file(X,R).
 (ls)/2 ?> 'R is a list of atoms containing the names of files in the directory X'.
 (ls)/1 ?> 'R is a list of atoms containing the names of flies in the current directory'.
 (ls)/1 ?> 'output files in the directory X'
-  @> cmd(psh,['-c','ls.'],"",T), sort(T), cmd(ls,[],"",T).
+  @> cmd('./psh',['-c','ls.'],"",T), sort(T), cmd(ls,[],"",T0), sort(T0), T == T0.
 
 (ls)/0 ?> 'output files in the current directory'.
 
