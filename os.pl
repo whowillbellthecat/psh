@@ -30,3 +30,6 @@ tty_dim/3 ?> 'X is a stream term, Y and Z are the width and height of the associ
 
 tty_dim('$stream'(Fd),X,Y) :- pl_tty_dim(Fd, X, Y).
 tty_dim(S,X,Y) :- atom(S), current_alias('$stream'(Fd),S), pl_tty_dim(Fd, X, Y).
+
+tz/1 ?> 'X is the localtime offset from UTC in seconds'
+  @> tz(X), number(X).
