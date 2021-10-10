@@ -34,14 +34,21 @@ fg/0 ?> 'resume last process in foreground'.
 fg :- psh_job_record(stopped,T), !, fg(T).
 fg :- puts('No matching job').
 
-cmd(Comm,Args,Output) :- spawn(Comm,Args,InW,OutR,ErrR), close(InW), close(ErrR), slurp(OutR, Output), close(OutR).
-cmd(Comm,Args,Input,Output) :-
+cmd(Comm,Args,read,Output) :- spawn(Comm,Args,InW,OutR,ErrR), close(InW), close(ErrR), slurp(OutR, Output), close(OutR).
+cmd(Comm,Args,write,Input) :- spawn(Comm,Args,InW,OutR,ErrR), close(ErrR), maplist(println(InW), Input), close(InW), close(OutR).
+
+cmd(Comm,Args,read/write,Input,Output) :-
 	spawn(Comm,Args,InW,OutR,ErrR),
 	close(ErrR),
         maplist(println(InW), Input),
 	close(InW),
         slurp(OutR, Output),
 	close(OutR).
+
+interactive_cmd(Comm,Args,Output) :- create_pipe(OutR,OutW), fork_prolog(N),
+	(  N == 0
+	-> ( close(OutR), spawn_(Comm,Args,'$stream'(0),OutW,'$stream'(2)), halt ; halt )
+	;  close(OutW), slurp(OutR, Output), close(OutR) ).
 
 spawn(Comm, Args, InW, OutR, ErrR) :-
 	create_pipe(InR, InW), create_pipe(OutR,OutW), create_pipe(ErrR,ErrW),
@@ -79,7 +86,7 @@ ed_(A,F) :- config(editor_line_flag,L), config(editor, E), my_spawn(E,[L,A,F]).
 ed_(_,F) :- ed F.
 
 (file)/2 ?> 'R is an atom containing the file type given by file(1) for the file given by the path expression X'.
-file(X), [M] => cmd(file,[X],M0), atom_codes(M,M0).
+file(X), [M] => M <- swap(atom_codes) <-- cmd(file,[X],read) <> nth(1).
 
 (file)/1 ?> 'run file(1) on the file given by the path expression X'.
 file(X) => spawn(file, [X]).
@@ -109,12 +116,12 @@ diff X => spawn(git, ['-P',diff,X]).
 push :- spawn(git, [push]).
 
 log/2 ?> 'Y is a list of lines (as codes) with the git log for the repository given by path expression X'.
-log(D), [M] => atom_concat('--git-dir=',D,T), cmd(git, [T,'-P',log,'--oneline'], M).
+log(D), [M] => atom_concat('--git-dir=',D,T), cmd(git, [T,'-P',log,'--oneline'], read,M).
 
 log/1 ?> 'output git log data if X is a path expression'.
 log/1 ?> 'X is a list of lines (as codes) with the git log data for the current directory'.
 log(D) => !, atom_concat('--git-dir=',D,T), spawn(git,[T,'-P',log,'--oneline']).
-log(M) :- var(M),cmd(git,['-P',log,'--oneline'],M).
+log(M) :- var(M), cmd(git,['-P',log,'--oneline'],read,M).
 
 log/0 ?> 'output git log data for the current directory'.
 log :- spawn(git, ['-P',log, '--oneline']).
