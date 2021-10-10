@@ -124,4 +124,5 @@ less(M) => spawn(less,[M]).
 
 (man)/1 ?> 'display the man page for X where X is an atom or a pair Section-PageName'.
 man(M) :- atom(M), !, spawn(man,[M]).
-man(Section-Page) :- number(Section), atom(Page), spawn(man,[Section,Page]).
+man(Section-Page) :- number(Section), atom(Page), !, number_atom(Section, Section0), spawn(man,[Section0,Page]).
+man(Section-Page) :- atom(Section), atom(Page), spawn(man,[Section,Page]).
