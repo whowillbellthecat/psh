@@ -2,7 +2,6 @@
 PREFIX=/usr/local
 BIN=$(DESTDIR)$(PREFIX)/bin
 INSTALL=install
-CC=gcc
 
 COMMIT=`git rev-parse HEAD`
 
