@@ -159,3 +159,6 @@ whichline(X/N,L) :- functor(C,X,N), predicate_property(C,prolog_line(L)).
 
 whichline/1 ?> 'output the line number predicate X/N was defined on'.
 whichline(X/N) :- puts <-- whichline(X/N).
+
+last_mod/2 ?> 'R is the last modification datetime of X'.
+last_mod(X), [R] => file_property(X,last_modification(R)).
