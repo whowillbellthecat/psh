@@ -26,8 +26,6 @@ are needed, install rlwrap, set LINEDIT='no', set PSH_RLWRAP, and set the vi edi
 doing so will cause psh to run itself under rlwrap automatically. I hope to eventually implement at least basic line editing
 functionality, supporting at least a subset of vi keybindings, line history, and basic file-path-aware tab completion.
 
-Despite its myriad limitations, I do use psh as my login shell.
-
 psh can be built by running `make` (any posix make should work). gplc - the gprolog compiler - and
 gcc are build dependencies (other C compilers may work, but gplc appears to output errors when clang
 is used). Some psh commands assume other runtime dependencies (e.g., less/1 assumes less is installed),
