@@ -1,24 +1,78 @@
-psh is an experimental, non-posix system/login shell which extends prolog with
-a custom toplevel and functionality to facilitate interoperating with a posix
-system.
+# Overview
+## What is psh?
 
-Presently psh is incomplete and has no releases or stable interfaces. Existing
-code may be thrown out or rewritten without warning.
+Psh is an experimental non-posix system shell. The shell replaces the GNU Prolog repl
+with a commited-choice repl that hides variable bindings and defines a library of useful
+predicates.
 
-Note that built psh binaries may be affected by GNU Prolog's licensing terms (GPL/LGPL).
+## Should I use it?
 
-Currently psh has major limitations including:
-	Lacks pipeline constructors for composing external processes
-	Lacks high level fd redirection routines
-	Limited job control (background processes not tracked)
-	Sparse documentation
-	Prolog predicates in the same process can't be interrupted
-	Lacks a general way to trap signals
-	dubious line editing (see below)
+Probably not for any serious use. For a time it was my login shell, but it has no other users to my
+knowledge, and recently, I haven't even been using it.
 
-Some of these limitations require extending Gprolog as the builtin os interface has some omissions. Other
-prolog implementations may not require extension (e.g., swi-prolog exposes a predicate for registering signal handlers),
-but fail to meet other requirements (such as supporting native code compilation).
+Psh is incomplete and has no releases or stable interfaces. In addition, there have been no serious
+commits for some time.
+
+## Why did you work on it if the design is a dead end?
+
+I wanted to learn prolog. I started with two assumptions:
+- Using prolog more frequently will accelerate learning
+- Using prolog for something it is supposed to be bad at will accelerate learning
+- Prolog would be more accessible with ide-like cli utilities
+
+Psh was originally an inside-out IDE in prolog for its own code base. As I tried to spend
+more time in the IDE, it morphed into a shell.
+
+## What does psh support?
+
+- Most valid prolog (modulo some parenthesis around operators)
+- Basic file system interaction
+- help/0 and help/1 predicates (run `help(P).` in psh for information about P)
+- ide-like predicates (e.g., jump to definition in editor)
+- A very limited form of job control
+- Some applicative-like operators for pretending predicates are functions
+
+## What does psh not support?
+- Pipeline constructors for composing external processes
+- High level FD redirection mechanisms
+- Background process tracking
+- Detailed documentation/structure
+- Static typing
+- Interruptable bultins/predicates
+- Signal trapping
+- Non-hacky line editing (if you use vi-mode)
+
+# Usage
+
+## Building
+psh can be built by running `make` (any posix make). gplc - the gprolog compiler - and gcc are build dependencies.
+clang may work, but builds failed with clang previously. Some noncritical psh commands have other runtime dependencies (e.g.,
+`less/1` assumes less is installed).
+
+The build process will first build make.pl, which will then expand psh specific constructs in the psh
+source. The expanded prolog files are named build/*.pl and subsequently compiled with gplc (which will
+call CC to compile os.c). The syntax of the psh source code requires make.pl to expand them. Currently,
+code loaded into psh must be valid prolog and thus cannot use these constructs.
+
+## Configuration
+Run `config.` to see configuration option and `set(Key, Value).` to set option Key to Value. Psh will try to use VISUAL/EDITOR for your
+text editor, and SUDO for your raise-privledges command of not set otherwise.
+
+Note that values set this way do not persist. In order to perist them, something like the following to `~/.pshrc` (this is regular prolog):
+
+```Prolog
+init :-
+   set(_Key0, _Value0),
+   set(_Key1, _Value1),
+   set(_Key2, _Value2).
+:- initialization(init/0).
+
+```
+
+In the example, the variables starting with an underscore would be replaced with actual settings and (lowercase or quoted) values.
+If this doesn't make sense, look for an introductory resource on prolog and familiarize yourself with the syntax.
+
+## Notes on usage
 
 Currently, line editing support is a bit underwhelming. GProlog does provide its own 'linedit' mechanism which
 allows expanding prolog atoms. It doesn't, however, support extension or vi-like keybindings. If vi-like keybindings
@@ -26,25 +80,13 @@ are needed, install rlwrap, set LINEDIT='no', set PSH_RLWRAP, and set the vi edi
 doing so will cause psh to run itself under rlwrap automatically. I hope to eventually implement at least basic line editing
 functionality, supporting at least a subset of vi keybindings, line history, and basic file-path-aware tab completion.
 
-psh can be built by running `make` (any posix make should work). gplc - the gprolog compiler - and
-gcc are build dependencies (other C compilers may work, but gplc appears to output errors when clang
-is used). Some psh commands assume other runtime dependencies (e.g., less/1 assumes less is installed),
-but these predicates can fail without affecting the functioning of the larger system.
-
-Some configuration may be necessary for setting the text editor (checks VISUAL, EDITOR, then tries vi), sudo
-command (checks SUDO, then tries doas), etc.  Use config/0 to see the configuration and set/2 to change a value.
-
-The build process will first build make.pl, which will then expand psh specific constructs in the psh
-source. The expanded prolog files are named build/*.pl and subsequently compiled with gplc (which will
-call CC to compile os.c). The syntax of the psh source code requires make.pl to expand them. Currently,
-code loaded into psh must be valid prolog and thus cannot use these constructs.
-
 Psh itself also implements operators using op/3, which can be used in code loaded into psh (e.g., via
 consult, [user], etc.). The op/3 directives are in op.pl so that they can be included separately.
 
 The predicate help/0 will output the documented subset of implemented predicates. Psh predicates intended for
 use at the psh top level are highly modal. In particular, if a predicate p/(n+1) has an 'output' variable,
-it is generally the last variable, and p/n will generally output to the terminal.
+it is generally the last variable, and p/n will generally output to the terminal. In the help output, X, Y, and Z are
+used positionally to stand in for the first, second, and third predicate variables.
 
 There are two primary composition operators: (<>)/2 and (<--)/2. The expression (p <> q) is equivalent to
 (p(X), q(X,Y), puts(Y)), with the additional property that if Y is a list puts is lifted over it. The expression
@@ -58,22 +100,31 @@ counterparts.
 Currently, psh will resolve predicates to atoms in some cases. This faculty enables inputing structural path expressions
 Due to the current mechanism, any functor f/n with an associated predicate f/n+1 where n>0 can be used in path expressions,
 but this is liable to change. The principal constructors are:
+```
 	(//X)		relative path -> root-prefixed absolute path
 	(~/X)		relative path -> user-home-prefixed absolute path
 	(X/Y)		path -> file component -> path
 	(X dot Y)	atom -> atom -> atom (joined by a '.' character)
 	(X ++ Y)	atom -> atom -> atom (concatenation)
+```
 
 The underlying predicate that accomplishes this is atom_resolve/2. In psh source files, the following expansion occurs:
+
+```
 	p(Q), [R] => q(Q,T), r(T,R).
+```
 		expands to:
+```Prolog
 	p(Q,R) :- atom_resolve(Q,Q0), q(Q0,T), r(T,R).
+```
+
 That is to say that occurrences of (=>) in the psh source indicate expressions which take path expressions as input (the
 list following the predicate in the head of the clause, mirroring DCG semi-context notation, indicates a list of variables
 of the head functor which should not be affected by the aforementioned transformation).
 
-Examples:
---
+# Examples
+
+```
 log <> length.                              % how many git commits have been made?
 fl (file).                                  % output the code in file.pl via portray_clause
 fl +(fl)/2 <> length.                       % how many clauses does fl/2 have as defined?
@@ -110,7 +161,9 @@ $ (sortby(length) <-- $t <> groupby(length)) <> fold(append). % n.b. groupby/sor
 [d,e]
 [d,e]
 [m,n]
+```
 
 --
+
 The lists by length frequency problem is taken from 'Ninety-Nine Prolog Problems', see:
     https://www.ic.unicamp.br/~meidanis/courses/mc336/2009s2/prolog/problemas/
